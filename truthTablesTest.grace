@@ -35,7 +35,7 @@ def test = object {
       assert (truthTables.iff(true, true)) shouldBe (true)
       assert (truthTables.iff(true, false)) shouldBe (false)
       assert (truthTables.iff(false, true)) shouldBe (false)
-      assert (truthTables.iff(false, false)) shouldBe (false)
+      assert (truthTables.iff(false, false)) shouldBe (true)
     }
 
     method testNand {
@@ -47,9 +47,9 @@ def test = object {
 
     method testNor {
       assert (truthTables.nor(true, true)) shouldBe (false)
-      assert (truthTables.nor(true, false)) shouldBe (true)
-      assert (truthTables.nor(false, true)) shouldBe (true)
-      assert (truthTables.nor(false, false)) shouldBe (false)
+      assert (truthTables.nor(true, false)) shouldBe (false)
+      assert (truthTables.nor(false, true)) shouldBe (false)
+      assert (truthTables.nor(false, false)) shouldBe (true)
     }
   }
 }
