@@ -1,0 +1,12 @@
+*
+!*.*
+*.c
+*.swp
+*.gcn
+*.gct
+bstNode
+bstTree
+dictionary
+bstTreeTest
+bstNodeTest
+dictionaryTest
