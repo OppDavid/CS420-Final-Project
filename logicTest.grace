@@ -7,6 +7,9 @@ def test = object {
     method testPredicateAsString { 
       assert (logic.predicate("A").asString) shouldBe ("A")
     }  
+    method testPredicatePredicates {
+      assert (logic.predicate("A").predicates) shouldBe (list.with(logic.predicate("A")))
+    }
     method testNotString { 
       assert (logic.predicate("A").not.asString) shouldBe ("~A")
     }  
