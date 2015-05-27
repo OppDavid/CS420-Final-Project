@@ -1,9 +1,9 @@
 #! /bin/bash
 
-minigrace utilsTest.grace \
-&& echo \
-&& minigrace zipTest.grace \
-&& echo \
-&& minigrace truthTablesTest.grace \
-&& echo \
-&& minigrace logic.grace
+minigrace utilsTest.grace 
+echo 
+minigrace zipTest.grace
+echo
+minigrace truthTablesTest.grace 
+echo 
+minigrace logic.grace
