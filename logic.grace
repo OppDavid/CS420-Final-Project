@@ -56,9 +56,50 @@ factory method expression {
         returnExp
     }
 
+    // A series of methods are implimented bellow to allow
+    // for any method traversing an expresion to determine
+    // the type of experesion it is looking at.  It may be that
+    // this is something that should be implimented using types
+    // Consider changing such "is_Operator" methods.
     method isNotOperator {
         if ( self.isUnaryOperator ) then {
             if ( self.symbol == "~" ) then {
+                return true
+            }
+        }
+        false
+    }
+    
+    method isAndOperator {
+        if ( self.isBinaryOperator ) then {
+            if ( self.symbol == "&" ) then {
+                return true
+            }
+        }
+        false
+    }
+    
+    method isOrOperator {
+        if ( self.isBinaryOperator ) then {
+            if ( self.symbol == "|" ) then {
+                return true
+            }
+        }
+        false
+    }
+    
+    method isImpliesOperator {
+        if ( self.isBinaryOperator ) then {
+            if ( self.symbol == "->" ) then {
+                return true
+            }
+        }
+        false
+    }
+    
+    method isIffOperator {
+        if ( self.isBinaryOperator ) then {
+            if ( self.symbol == "<->" ) then {
                 return true
             }
         }

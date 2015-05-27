@@ -55,14 +55,14 @@ def test = object {
       def b = logic.buildTruthTableStates(2)
       assert (a) shouldBe (b)
     }
-    method copyEqualityTest {
+    method testCopyEquality {
         def a = logic.predicate("A")
         def b = logic.predicate("B")
         def e = a.and(b)
         def f = e.copy
         assert (f.asString) shouldBe ("(A&B)")
     }
-    method copyImutabiltyTest {
+    method testCopyImutabilty {
         def a = logic.predicate("A")
         def b = logic.predicate("B")
         def e = a.and(b)
@@ -70,6 +70,35 @@ def test = object {
         f.operand1 := logic.predicate("C")
         assert (e.asString) shouldBe ("(A&B)")
         assert (f.asString) shouldBe ("(C&B)")
+    }
+    method testIsNotOperator {
+        def a = logic.predicate("A")
+        def e = a.not
+        assert (e.isNotOperator) shouldBe (true)
+    }
+    method testIsAndOperatorTest {
+        def a = logic.predicate("A")
+        def b = logic.predicate("B")
+        def e = a.and(b)
+        assert (e.isAndOperator) shouldBe (true)
+    }
+    method testIsOrOperator {
+        def a = logic.predicate("A")
+        def b = logic.predicate("B")
+        def e = a.or(b)
+        assert (e.isOrOperator) shouldBe (true)
+    }
+    method testIsImpliesOperator {
+        def a = logic.predicate("A")
+        def b = logic.predicate("B")
+        def e = a.implies(b)
+        assert (e.isImpliesOperator) shouldBe (true)
+    }
+    method testIsIffOperator {
+        def a = logic.predicate("A")
+        def b = logic.predicate("B")
+        def e = a.iff(b)
+        assert (e.isIffOperator) shouldBe (true)
     }
   }
 }
