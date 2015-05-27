@@ -1,7 +1,8 @@
 import "truthTables" as truthTables 
-import "zip" as zip
+//import "zip" as zip
 
 factory method expression { 
+    def thisObject = self
     method evaluate { abstract }
     method predicates { abstract }
     method not { notOperator(self) }  
@@ -10,33 +11,33 @@ factory method expression {
     method implies (other) { impliesOperator(self, other) }  
     method iff (other) { iffOperator(self, other) }  
     factory method truthTable {
-        def states = buildTruthTableStates(predicates.size)            
-        def containedPredicates = predicates
-        def results = list.empty() 
-        // Compute results
-        {
-            states.do { state ->
-                (1..(state.size)).do { i ->
-                    containedPredicates.at(i).state := state.at(i)
-                }
-                results.addLast(evaluate)
-            }
-        }.apply
+    //    def states = buildTruthTableStates(thisObject.predicates.size)            
+    //    def containedPredicates = thisObject.predicates
+    //    def results = list.empty() 
+    //    // Compute results
+    //    {
+    //        states.do { state ->
+    //            (1..(state.size)).do { i ->
+    //                containedPredicates.at(i).state := state.at(i)
+    //            }
+    //            results.addLast(evaluate)
+    //        }
+    //    }.apply
 
-        method asString {
-            var output := ""
+    //    method asString {
+    //        var output := ""
 
-            var header := containedPredicates.fold { result, it -> 
-                result.asString ++ it.asString ++ " | "
-            } startingWith ""
-            header := header ++ outer.asString 
+    //        var header := containedPredicates.fold { result, it -> 
+    //            result.asString ++ it.asString ++ " | "
+    //        } startingWith ""
+    //        header := header ++ outer.asString 
 
-            output := output ++ header ++ "\n"
-             
-            zip.together(states, results)
+    //        output := output ++ header ++ "\n"
+    //         
+    //        //zip.together(states, results)
 
-            output
-        }
+    //        output
+    //    }
     }
 }
 
@@ -106,6 +107,8 @@ factory method iffOperator(operand1, operand2) {
 // These should be in the set
 //
 method setCrossProduct(set1, set2) {
+  // setCrossProduct([a, b], [c, d])
+  // -> [[a, c, d], [b, c, d]]
   def newSet: Set = list.empty
   var newElement: List
   set1.do { eachSet1Element ->
@@ -128,6 +131,8 @@ method setCrossProduct(set1, set2) {
 }
 
 method buildTruthTableStates(numberOfPredicates) {
+  // buildTruthTableStates(2) ->
+  // [[T, T], [T, F], [F, T], [F, F]] 
   var states := list.with(true, false)
   for (1..(numberOfPredicates-1)) do { i -> 
     states := setCrossProduct(states, list.with(true, false))
