@@ -10,7 +10,7 @@ factory method together(xs) {
     method fold(block1) startingWith(initial) { iterator.fold(block1) startingWith(initial) }
     method filter(selectionCondition) { iterator.selectionCondition }
     factory method iterator<T> {
-      inherits iterable.trait<T>
+      inherits enumerable.trait<T>
       var index := 1
       method hasNext { index <= smallestSize }
       method next {

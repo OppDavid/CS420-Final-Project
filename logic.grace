@@ -1,5 +1,5 @@
 import "truthTables" as truthTables 
-//import "zip" as zip
+import "zip" as zip
 
 factory method expression { 
     def thisObject = self
@@ -29,11 +29,11 @@ factory method truthTable(exp) {
         var header := containedPredicates.fold { result, it -> 
                                                  result.asString ++ it.asString ++ " | "
                                                } startingWith ""
-        header := header ++ outer.asString 
+        header := header ++ exp.asString 
 
         output := output ++ header ++ "\n"
  
-       //zip.together(states, results)
+        zip.together(states, results)
 
         output
    }
