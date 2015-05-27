@@ -20,8 +20,7 @@ factory method truthTable(exp) {
         (1..(state.size)).do { i ->
             containedPredicates.at(i).state := state.at(i)
         }
-        // There is no evaluate at this scope
-        //results.addLast(evaluate)
+        results.addLast(exp.evaluate)
     }
 
     method asString {
@@ -143,4 +142,4 @@ def A = predicate("A")
 def B = predicate("B")
 def E = A.and(B)
 print(E)
-print(E.truthTable)
+print(truthTable(E))
