@@ -10,35 +10,34 @@ factory method expression {
     method or (other) { orOperator(self, other) }  
     method implies (other) { impliesOperator(self, other) }  
     method iff (other) { iffOperator(self, other) }  
-    factory method truthTable {
-    //    def states = buildTruthTableStates(thisObject.predicates.size)            
-    //    def containedPredicates = thisObject.predicates
-    //    def results = list.empty() 
-    //    // Compute results
-    //    {
-    //        states.do { state ->
-    //            (1..(state.size)).do { i ->
-    //                containedPredicates.at(i).state := state.at(i)
-    //            }
-    //            results.addLast(evaluate)
-    //        }
-    //    }.apply
+}
 
-    //    method asString {
-    //        var output := ""
-
-    //        var header := containedPredicates.fold { result, it -> 
-    //            result.asString ++ it.asString ++ " | "
-    //        } startingWith ""
-    //        header := header ++ outer.asString 
-
-    //        output := output ++ header ++ "\n"
-    //         
-    //        //zip.together(states, results)
-
-    //        output
-    //    }
+factory method truthTable(exp) {
+    def states = buildTruthTableStates(exp.predicates.size)            
+    def containedPredicates = exp.predicates
+    def results = list.empty() 
+    states.do { state ->
+        (1..(state.size)).do { i ->
+            containedPredicates.at(i).state := state.at(i)
+        }
+        // There is no evaluate at this scope
+        //results.addLast(evaluate)
     }
+
+    method asString {
+        var output := ""
+
+        var header := containedPredicates.fold { result, it -> 
+                                                 result.asString ++ it.asString ++ " | "
+                                               } startingWith ""
+        header := header ++ outer.asString 
+
+        output := output ++ header ++ "\n"
+ 
+       //zip.together(states, results)
+
+        output
+   }
 }
 
 method predicate(id) { predicate(id) withState (true) }
