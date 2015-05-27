@@ -1,7 +1,4 @@
-// zip.grace
-
 import "utils" as utils
-import "gUnit" as gU
 
 factory method together(xs) {
     method asString { "Zip({xs})" }
@@ -32,58 +29,3 @@ factory method together(xs) {
       } startingWith (sizes.at(1))
     }
 }
-
-// Tests
-
-def zipTest = object {
-    class forMethod(m) {
-        inherits gU.testCaseNamed(m)
-        
-        method testAsString {
-          def zip = together(list.with(
-            list.with(1)
-          ))
-          assert (zip.asString) shouldBe ("Zip([[1]])")
-        }
-        
-        method testSmallestSize {
-            def l1 = list.with(
-              list.with(1)
-            )
-            def l2 = list.with(
-              list.with(1,2),
-              list.with(3,4,5)
-            )
-            def l3 = list.with(
-              list.with(1,2,3,4),
-              list.with(1,2,3),
-              list.with(1,2,3,4,5)
-            )
-            assert (together(l1).smallestSize) shouldBe (1)
-            //assert (together(l2).smallestSize) shouldBe (2)
-            //assert (together(l3).smallestSize) shouldBe (3)
-        }
-        method testIterator {
-           def zip = together(list.with(list.with(1)))
-           def i = zip.iterator
-           assert (i.hasNext) shouldBe(true)
-           assert (i.next) shouldBe(list.with(1))
-           assert (i.hasNext) shouldBe(false)
-           //assert (i.next) shouldRaise(Exhausted)
-        }
-        method testMap {
-          def zip = together(list.with(
-            list.with(1,2),
-            list.with(3,4,5)
-          ))
-          def result = list.with(
-            list.with(1,3),
-            list.with(2,4)
-          )
-          assert (zip.map{each -> each}.asList) shouldBe (result)
-        }
-    }
-}
-
-print "zips"
-gU.testSuite.fromTestMethodsIn(zipTest).runAndPrintResults
