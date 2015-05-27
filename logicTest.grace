@@ -55,6 +55,22 @@ def test = object {
       def b = logic.buildTruthTableStates(2)
       assert (a) shouldBe (b)
     }
+    method copyEqualityTest {
+        def a = logic.predicate("A")
+        def b = logic.predicate("B")
+        def e = a.and(b)
+        def f = e.copy
+        assert (f.asString) shouldBe ("(A&B)")
+    }
+    method copyImutabiltyTest {
+        def a = logic.predicate("A")
+        def b = logic.predicate("B")
+        def e = a.and(b)
+        def f = e.copy
+        f.operand1 := logic.predicate("C")
+        assert (e.asString) shouldBe ("(A&B)")
+        assert (f.asString) shouldBe ("(C&B)")
+    }
   }
 }
 
