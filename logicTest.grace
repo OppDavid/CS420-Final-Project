@@ -45,15 +45,15 @@ def test = object {
     }
     // This should also work...
     method testBuildTruthTableStatesWithOne {
-    //  def a = [[true], [false]]
-    //  def b = logic.buildTruthTableStates(1)
-    //  assert (a) shouldBe (b)
+      def a = [[true], [false]]
+      def b = logic.buildTruthTableStates(1)
+      assert (b) shouldBe (a)
     }
     // This should work 
     method testBuildTruthTableStatesWithTwo {
-    //  def a = [[true, true], [true, false], [false, true], [false, false]]
-    //  def b = logic.buildTruthTableStates(2)
-    //  assert (a) shouldBe (b)
+      def a = [[true, true], [true, false], [false, true], [false, false]]
+      def b = logic.buildTruthTableStates(2)
+      assert (a) shouldBe (b)
     }
   }
 }

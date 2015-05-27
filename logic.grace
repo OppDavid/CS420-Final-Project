@@ -1,15 +1,37 @@
 import "truthTables" as truthTables 
-import "zip" as zip
+// import "zip" as zip
 
 factory method expression { 
-    def thisObject = self
+    // Should be done with type checking
+    method isPredicate { abstract }
     method evaluate { abstract }
     method predicates { abstract }
     method not { notOperator(self) }  
     method and (other) { andOperator(self, other) }  
     method or (other) { orOperator(self, other) }  
     method implies (other) { impliesOperator(self, other) }  
-    method iff (other) { iffOperator(self, other) }  
+    method iff (other) { iffOperator(self, other) }
+    method isTautology {
+        def states = buildTruthTableStates(self.predicates.size)
+        def containedPredicates = self.predicates
+        def results = list.empty() 
+        states.do { state ->
+            (1..(state.size)).do { i ->
+                containedPredicates.at(i).state := state.at(i)
+            }
+            results.addLast(self.evaluate)
+        }
+        print(results)
+        results.do { each ->
+            if ( !each ) then {
+                return false
+            }
+        }
+        true
+    }
+    method isContradiction {
+        false
+    }
 }
 
 factory method truthTable(exp) {
@@ -32,8 +54,15 @@ factory method truthTable(exp) {
         header := header ++ exp.asString 
 
         output := output ++ header ++ "\n"
- 
-        zip.together(states, results)
+        
+        (1..states.size).do { i ->
+          states.at(i).do { each ->
+            output := output ++ "{each} | "
+          }
+          output := output ++ results.at(i).asString ++ "\n"
+        }
+
+        // zip.together(states, results)
 
         output
    }
@@ -43,23 +72,34 @@ method predicate(id) { predicate(id) withState (true) }
 factory method predicate(id) withState (state') {
     inherits expression
     var state is public := state'
+    method isPredicate { true }
     method asString { "{id}" }
     method evaluate { state }
     method predicates { list.with(self) }
     method hash { id.hash }
 }
 
-factory method operator { 
+
+// Why does this exsist other than to rename
+// expression to operator?
+factory method operator(symbol') { 
     inherits expression
+    // Should be done with type checking
+    def symbol = symbol'
+    method isPredicate { false }
 }
 
-factory method unaryOperator(operand) {
-    inherits operator
+factory method unaryOperator(operand', symbol') {
+    inherits operator(symbol')
+    var operand := operand'
     method predicates { operand.predicates }
+    method asString { "{symbol}{operand}" }
 }
 
-factory method binaryOperator(operand1, operand2) {
-    inherits operator
+factory method binaryOperator(operand1', operand2', symbol') {
+    inherits operator(symbol')
+    var operand1 := operand1'
+    var operand2 := operand2'
     method predicates { 
         def newList = operand1.predicates.copy
         operand2.predicates.do { each ->
@@ -69,35 +109,31 @@ factory method binaryOperator(operand1, operand2) {
         }
         newList
     }
+    method asString { "({operand1}{symbol}{operand2})" }
 }
 
-factory method notOperator(operand) {
-    inherits unaryOperator(operand)
-    method asString { "~{operand}" }
+factory method notOperator(operand') {
+    inherits unaryOperator(operand', "~")
     method evaluate { truthTables.not(operand.evaluate) }
 }
 
-factory method andOperator(operand1, operand2) {
-    inherits binaryOperator(operand1, operand2)
-    method asString { "({operand1}&{operand2})" }
+factory method andOperator(operand1', operand2') {
+    inherits binaryOperator(operand1', operand2', "&&")
     method evaluate { truthTables.and(operand1.evaluate, operand2.evaluate) }
 }
 
-factory method orOperator(operand1, operand2) {
-    inherits binaryOperator(operand1, operand2)
-    method asString { "({operand1}|{operand2})" }
+factory method orOperator(operand1', operand2') {
+    inherits binaryOperator(operand1', operand2', "||")
     method evaluate { truthTables.or(operand1.evaluate, operand2.evaluate) }
 }
 
-factory method impliesOperator(operand1, operand2) {
-    inherits binaryOperator(operand1, operand2)
-    method asString { "({operand1}->{operand2})" }
+factory method impliesOperator(operand1', operand2') {
+    inherits binaryOperator(operand1', operand2', "->")
     method evaluate { truthTables.implies(operand1.evaluate, operand2.evaluate) }
 }
 
-factory method iffOperator(operand1, operand2) {
-    inherits binaryOperator(operand1, operand2)
-    method asString { "({operand1}<->{operand2})" }
+factory method iffOperator(operand1', operand2') {
+    inherits binaryOperator(operand1', operand2', "<->")
     method evaluate { truthTables.iff(operand1.evaluate, operand2.evaluate) }
 }
 
@@ -131,7 +167,7 @@ method setCrossProduct(set1, set2) {
 method buildTruthTableStates(numberOfPredicates) {
   // buildTruthTableStates(2) ->
   // [[T, T], [T, F], [F, T], [F, F]] 
-  var states := list.with(true, false)
+  var states := list.with(list.with(true), list.with(false))
   for (1..(numberOfPredicates-1)) do { i -> 
     states := setCrossProduct(states, list.with(true, false))
   }
@@ -143,3 +179,7 @@ def B = predicate("B")
 def E = A.and(B)
 print(E)
 print(truthTable(E))
+def F = A.or(A.not)
+print(F)
+print(truthTable(F))
+print(F.isTautology)
