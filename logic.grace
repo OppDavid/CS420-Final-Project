@@ -70,6 +70,21 @@ factory method expression {
         }
         returnExp
     }
+    
+    method conversionIffToImplies {
+        var returnExp := self.copy
+        if ( returnExp.isUnaryOperator ) then {
+            returnExp.operand := returnExp.operand.conversionIffToImplies
+        } elseif ( returnExp.isBinaryOperator ) then {
+            returnExp.operand1 := returnExp.operand1.conversionIffToImplies
+            returnExp.operand2 := returnExp.operand2.conversionIffToImplies
+            // Patern to convert detected here
+            if ( returnExp.isIffOperator ) then {
+                returnExp := andOperator(impliesOperator(returnExp.operand1.copy, returnExp.operand2.copy), impliesOperator(returnExp.operand2, returnExp.operand1))
+            }
+        }
+        returnExp
+    }
 
     // A series of methods are implimented bellow to allow
     // for any method traversing an expresion to determine
