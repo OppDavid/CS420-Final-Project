@@ -116,6 +116,28 @@ def test = object {
         def e = a.and(b)
         assert (a.isConditional) shouldBe (true)
     }
+    method testPredicateEquality {
+        def a = logic.predicate("A")
+        assert ( a == a ) shouldBe (true)
+    }
+    method testExpresionEquality {
+        def a = logic.predicate("A")
+        def b = logic.predicate("B")
+        def e = a.and(b)
+        assert ( e == e ) shouldBe (true)
+    }
+    method testPredicateNotEquality {
+        def a = logic.predicate("A")
+        def b = logic.predicate("B")
+        assert ( a != b ) shouldBe (true)
+    }
+    method testExpresionNotEquality {
+        def a = logic.predicate("A")
+        def b = logic.predicate("B")
+        def e = a.and(b)
+        def f = a.or(b)
+        assert ( e != f ) shouldBe (true)
+    }
   }
 }
 

@@ -17,6 +17,15 @@ factory method expression {
     
     method copy { abstract }
     
+    method ==(other) {
+        if (self.asString == other.asString) then { return true }
+        false
+    }
+    
+    method !=(other) {
+        ( self == other ).not
+    }
+    
     method isTautology {
         def states = buildTruthTableStates(self.predicates.size)
         def containedPredicates = self.predicates
