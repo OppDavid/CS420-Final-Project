@@ -114,6 +114,13 @@ factory method expression {
         }
         returnExp
     }
+    
+    method removeAllImplications {
+        var returnExp := self.copy
+        returnExp := returnExp.conversionIffToImplies
+        returnExp := returnExp.conversionImpliesToOr
+        returnExp
+    }
 
     // A series of methods are implimented bellow to allow
     // for any method traversing an expresion to determine
@@ -314,23 +321,3 @@ method buildTruthTableStates(numberOfPredicates) {
   }
   states
 }
-
-def A = predicate("A")
-def B = predicate("B")
-def E = A.not.not
-print(E)
-def F = E.simplificationRemoveNotNot
-print(E)
-print(F)
-def G = (A.not.not).and(B.not.not)
-print(G)
-def H = G.simplificationRemoveNotNot
-print(G)
-print(H)
-//def E = A.and(B)
-//print(E)
-//print(truthTable(E))
-//def F = A.or(A.not)
-//print(F)
-//print(truthTable(F))
-//print(F.isTautology)
