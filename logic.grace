@@ -27,7 +27,6 @@ factory method expression {
             }
             results.addLast(self.evaluate)
         }
-        print(results)
         results.do { each ->
             if ( !each ) then {
                 return false
@@ -35,8 +34,29 @@ factory method expression {
         }
         true
     }
+    
     method isContradiction {
-        false
+        def states = buildTruthTableStates(self.predicates.size)
+        def containedPredicates = self.predicates
+        def results = list.empty() 
+        states.do { state ->
+            (1..(state.size)).do { i ->
+                containedPredicates.at(i).state := state.at(i)
+            }
+            results.addLast(self.evaluate)
+        }
+        results.do { each ->
+            if ( each ) then {
+                return false
+            }
+        }
+        true
+    }
+    
+    method isConditional {
+        if (isTautology) then { return false }
+        if (isContradiction) then { return false }
+        true
     }
     
     method simplificationRemoveNotNot {

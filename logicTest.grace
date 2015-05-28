@@ -100,6 +100,22 @@ def test = object {
         def e = a.iff(b)
         assert (e.isIffOperator) shouldBe (true)
     }
+    method testIsTautology {
+        def a = logic.predicate("A")
+        def e = a.or(a.not)
+        assert (e.isTautology) shouldBe (true)
+    }
+    method testIsContradiction {
+        def a = logic.predicate("A")
+        def e = a.and(a.not)
+        assert (e.isContradiction) shouldBe (true)
+    }
+    method testIsConditional {
+        def a = logic.predicate("A")
+        def b = logic.predicate("B")
+        def e = a.and(b)
+        assert (a.isConditional) shouldBe (true)
+    }
   }
 }
 
