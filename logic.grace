@@ -55,6 +55,21 @@ factory method expression {
         }
         returnExp
     }
+    
+    method conversionImpliesToOr {
+        var returnExp := self.copy
+        if ( returnExp.isUnaryOperator ) then {
+            returnExp.operand := returnExp.operand.conversionImpliesToOr
+        } elseif ( returnExp.isBinaryOperator ) then {
+            returnExp.operand1 := returnExp.operand1.conversionImpliesToOr
+            returnExp.operand2 := returnExp.operand2.conversionImpliesToOr
+            // Patern to convert detected here
+            if ( returnExp.isImpliesOperator ) then {
+                returnExp := orOperator(returnExp.operand1.not, returnExp.operand2)
+            }
+        }
+        returnExp
+    }
 
     // A series of methods are implimented bellow to allow
     // for any method traversing an expresion to determine
