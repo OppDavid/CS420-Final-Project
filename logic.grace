@@ -14,6 +14,10 @@ factory method expression {
     method or (other) { orOperator(self, other) }  
     method implies (other) { impliesOperator(self, other) }  
     method iff (other) { iffOperator(self, other) }
+    method &(other) { and(other) }
+    method |(other) { or(other) }
+    //method ->(other) { implies(other) }
+    //method <->(other) { iff(other) }
     
     method copy { abstract }
     

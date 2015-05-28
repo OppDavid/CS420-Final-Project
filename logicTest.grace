@@ -17,7 +17,7 @@ def test = object {
       def a = logic.predicate("A")
       def b = logic.predicate("B")
       assert (a.and(b).asString) shouldBe ("(A&B)")
-    }  
+    }
     method testOrString { 
       def a = logic.predicate("A")
       def b = logic.predicate("B")
@@ -32,7 +32,31 @@ def test = object {
       def a = logic.predicate("A")
       def b = logic.predicate("B")
       assert (a.iff(b).asString) shouldBe ("(A<->B)")
-    } 
+    }
+    method testAndBinaryOperator { 
+      def a = logic.predicate("A")
+      def b = logic.predicate("B")
+      def e = a&b
+      assert (e.asString) shouldBe ("(A&B)")
+    }
+    method testOrBinaryOperator { 
+      def a = logic.predicate("A")
+      def b = logic.predicate("B")
+      def e = a|b
+      assert (e.asString) shouldBe ("(A|B)")
+    }  
+    //method testImpliesBinaryOperator { 
+    //  def a = logic.predicate("A")
+    //  def b = logic.predicate("B")
+    //  def e = a->b
+    //  assert (e.asString) shouldBe ("(A->B)")
+    //}  
+    //method testIffBinaryOperator {  
+    //  def a = logic.predicate("A")
+    //  def b = logic.predicate("B")
+    //  def e = a<->b
+    //  assert (e.asString) shouldBe ("(A<->B)")
+    //}
     method testSetCrossProductOfOneElementSets {
       def expected = [[1, 2]]
       def actual = logic.setCrossProduct([1], [2])
