@@ -38,7 +38,7 @@ def test = object {
             def b = logic.predicate("B")
             def e = a.implies(b)
             def eConv = e.conversionImpliesToOr
-            assert (e.asString) shouldBe ("(A->B)")
+            assert (e.asString) shouldBe ("(A=>B)")
             assert (eConv.asString) shouldBe ("(~A|B)")
         }
         method testNestedImplesToOrOne {
@@ -48,7 +48,7 @@ def test = object {
             def d = logic.predicate("D")
             def e = (a.implies(b)).and(c.implies(d))
             def eConv = e.conversionImpliesToOr
-            assert (e.asString) shouldBe ("((A->B)&(C->D))")
+            assert (e.asString) shouldBe ("((A=>B)&(C=>D))")
             assert (eConv.asString) shouldBe ("((~A|B)&(~C|D))")
         }
         method testNestedImpliesToOrTwo {
@@ -57,7 +57,7 @@ def test = object {
             def c = logic.predicate("C")
             def e = a.implies(b.implies(c))
             def eConv = e.conversionImpliesToOr
-            assert (e.asString) shouldBe ("(A->(B->C))")
+            assert (e.asString) shouldBe ("(A=>(B=>C))")
             assert (eConv.asString) shouldBe ("(~A|(~B|C))")
         }
         method testIffToImplies {
@@ -65,8 +65,8 @@ def test = object {
             def b = logic.predicate("B")
             def e = a.iff(b)
             def eConv = e.conversionIffToImplies
-            assert (e.asString) shouldBe ("(A<->B)")
-            assert (eConv.asString) shouldBe ("((A->B)&(B->A))")
+            assert (e.asString) shouldBe ("(A<=>B)")
+            assert (eConv.asString) shouldBe ("((A=>B)&(B=>A))")
         }
         method testNestedIffToImpliesOne {
             def a = logic.predicate("A")
@@ -75,8 +75,8 @@ def test = object {
             def d = logic.predicate("D")
             def e = (a.iff(b)).and(c.iff(d))
             def eConv = e.conversionIffToImplies
-            assert (e.asString) shouldBe ("((A<->B)&(C<->D))")
-            assert (eConv.asString) shouldBe ("(((A->B)&(B->A))&((C->D)&(D->C)))")
+            assert (e.asString) shouldBe ("((A<=>B)&(C<=>D))")
+            assert (eConv.asString) shouldBe ("(((A=>B)&(B=>A))&((C=>D)&(D=>C)))")
         }
         method testNestedIffToImpliesTwo {
             def a = logic.predicate("A")
@@ -84,15 +84,15 @@ def test = object {
             def c = logic.predicate("C")
             def e = a.iff(b.iff(c))
             def eConv = e.conversionIffToImplies
-            assert (e.asString) shouldBe ("(A<->(B<->C))")
-            assert (eConv.asString) shouldBe ("((A->((B->C)&(C->B)))&(((B->C)&(C->B))->A))")
+            assert (e.asString) shouldBe ("(A<=>(B<=>C))")
+            assert (eConv.asString) shouldBe ("((A=>((B=>C)&(C=>B)))&(((B=>C)&(C=>B))=>A))")
         }
         method testRemoveAllImplications {
             def a = logic.predicate("A")
             def b = logic.predicate("B")
             def e = a.iff(b)
             def eConv = e.removeAllImplications
-            assert (e.asString) shouldBe ("(A<->B)")
+            assert (e.asString) shouldBe ("(A<=>B)")
             assert (eConv.asString) shouldBe ("((~A|B)&(~B|A))")
         }
         

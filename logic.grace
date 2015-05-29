@@ -1,7 +1,21 @@
 import "truthTables" as truthTables 
 // import "zip" as zip
 
-factory method expression { 
+factory method expression {
+    // We would rather not calculate these values everytime these methods are invoked,
+    // but methods were needed instead of defs to use inheritance.
+    method states {buildTruthTableStates(self.predicates.size) } 
+    method containedPredicates { self.predicates } 
+    method results { 
+      var returnResults := list.empty() 
+      states.do { state ->
+        (1..(state.size)).do { i ->
+            containedPredicates.at(i).state := state.at(i)
+        }
+        returnResults.addLast(self.evaluate)
+      }
+      returnResults
+    }
     // These three "is" functions should be done
     // by type checking... Does that work in grace?
     method isPredicate { abstract }
@@ -16,8 +30,9 @@ factory method expression {
     method iff (other) { iffOperator(self, other) }
     method &(other) { and(other) }
     method |(other) { or(other) }
-    //method ->(other) { implies(other) }
-    //method <->(other) { iff(other) }
+    method =>(other) { implies(other) }
+    method ≡(other) { iff(other) }
+    method prefix~ { self.not }
     
     method copy { abstract }
     
@@ -31,15 +46,6 @@ factory method expression {
     }
     
     method isTautology {
-        def states = buildTruthTableStates(self.predicates.size)
-        def containedPredicates = self.predicates
-        def results = list.empty() 
-        states.do { state ->
-            (1..(state.size)).do { i ->
-                containedPredicates.at(i).state := state.at(i)
-            }
-            results.addLast(self.evaluate)
-        }
         results.do { each ->
             if ( !each ) then {
                 return false
@@ -49,15 +55,6 @@ factory method expression {
     }
     
     method isContradiction {
-        def states = buildTruthTableStates(self.predicates.size)
-        def containedPredicates = self.predicates
-        def results = list.empty() 
-        states.do { state ->
-            (1..(state.size)).do { i ->
-                containedPredicates.at(i).state := state.at(i)
-            }
-            results.addLast(self.evaluate)
-        }
         results.do { each ->
             if ( each ) then {
                 return false
@@ -126,7 +123,7 @@ factory method expression {
         returnExp
     }
 
-    // A series of methods are implimented bellow to allow
+    // A series of methods are implemented below to allow
     // for any method traversing an expresion to determine
     // the type of experesion it is looking at.  It may be that
     // this is something that should be implimented using types
@@ -160,7 +157,7 @@ factory method expression {
     
     method isImpliesOperator {
         if ( self.isBinaryOperator ) then {
-            if ( self.symbol == "->" ) then {
+            if ( self.symbol == "=>" ) then {
                 return true
             }
         }
@@ -169,7 +166,7 @@ factory method expression {
     
     method isIffOperator {
         if ( self.isBinaryOperator ) then {
-            if ( self.symbol == "<->" ) then {
+            if ( self.symbol == "<=>" ) then {
                 return true
             }
         }
@@ -178,31 +175,21 @@ factory method expression {
 }
 
 factory method truthTable(exp) {
-    def states = buildTruthTableStates(exp.predicates.size)            
-    def containedPredicates = exp.predicates
-    def results = list.empty() 
-    states.do { state ->
-        (1..(state.size)).do { i ->
-            containedPredicates.at(i).state := state.at(i)
-        }
-        results.addLast(exp.evaluate)
-    }
-
     method asString {
         var output := ""
-
-        var header := containedPredicates.fold { result, it -> 
+        print(exp.containedPredicates)
+        var header := exp.containedPredicates.fold { result, it -> 
                                                  result.asString ++ it.asString ++ " | "
                                                } startingWith ""
         header := header ++ exp.asString 
 
         output := output ++ header ++ "\n"
         
-        (1..states.size).do { i ->
-          states.at(i).do { each ->
+        (1..exp.states.size).do { i ->
+          exp.states.at(i).do { each ->
             output := output ++ "{each} | "
           }
-          output := output ++ results.at(i).asString ++ "\n"
+          output := output ++ exp.results.at(i).asString ++ "\n"
         }
 
         // zip.together(states, results)
@@ -278,13 +265,13 @@ factory method orOperator(operand1', operand2') {
 }
 
 factory method impliesOperator(operand1', operand2') {
-    inherits binaryOperator(operand1', operand2', "->")
+    inherits binaryOperator(operand1', operand2', "=>")
     method evaluate { truthTables.implies(operand1.evaluate, operand2.evaluate) }
     method copy { impliesOperator(operand1.copy, operand2.copy) }
 }
 
 factory method iffOperator(operand1', operand2') {
-    inherits binaryOperator(operand1', operand2', "<->")
+    inherits binaryOperator(operand1', operand2', "<=>")
     method evaluate { truthTables.iff(operand1.evaluate, operand2.evaluate) }
     method copy { iffOperator(operand1.copy, operand2.copy) }
 }

@@ -8,7 +8,7 @@ def test = object {
       assert (logic.predicate("A").asString) shouldBe ("A")
     }  
     method testPredicatePredicates {
-//      assert (logic.predicate("A").predicates) shouldBe (list.with(logic.predicate("A")))
+      assert (logic.predicate("A").predicates) shouldBe (list.with(logic.predicate("A")))
     }
     method testNotString { 
       assert (logic.predicate("A").not.asString) shouldBe ("~A")
@@ -26,12 +26,12 @@ def test = object {
     method testImpliesString { 
       def a = logic.predicate("A")
       def b = logic.predicate("B")
-      assert (a.implies(b).asString) shouldBe ("(A->B)")
+      assert (a.implies(b).asString) shouldBe ("(A=>B)")
     }  
     method testIffString { 
       def a = logic.predicate("A")
       def b = logic.predicate("B")
-      assert (a.iff(b).asString) shouldBe ("(A<->B)")
+      assert (a.iff(b).asString) shouldBe ("(A<=>B)")
     }
     method testAndBinaryOperator { 
       def a = logic.predicate("A")
@@ -45,39 +45,44 @@ def test = object {
       def e = a|b
       assert (e.asString) shouldBe ("(A|B)")
     }  
-    //method testImpliesBinaryOperator { 
-    //  def a = logic.predicate("A")
-    //  def b = logic.predicate("B")
-    //  def e = a->b
-    //  assert (e.asString) shouldBe ("(A->B)")
-    //}  
-    //method testIffBinaryOperator {  
-    //  def a = logic.predicate("A")
-    //  def b = logic.predicate("B")
-    //  def e = a<->b
-    //  assert (e.asString) shouldBe ("(A<->B)")
-    //}
+    method testImpliesBinaryOperator { 
+      def a = logic.predicate("A")
+      def b = logic.predicate("B")
+      def e = a=>b
+      assert (e.asString) shouldBe ("(A=>B)")
+    }  
+    method testIffBinaryOperator {  
+      def a = logic.predicate("A")
+      def b = logic.predicate("B")
+      def e = a≡b
+      assert (e.asString) shouldBe ("(A<=>B)")
+    }
+    method testNotUnaryOperator {
+      def a = logic.predicate("A")
+      def e = ~a
+      assert (e.asString) shouldBe ("~A")
+    }
     method testSetCrossProductOfOneElementSets {
       def expected = [[1, 2]]
       def actual = logic.setCrossProduct([1], [2])
-      assert (actual) shouldBe (expected)
+      assert (actual.asString) shouldBe (expected.asString)
     }
     method testSetCrossProductOfTwoElementSets {
       def expected = [[1, 3], [1, 4], [2, 3], [2, 4]]
       def actual = logic.setCrossProduct([1, 2], [3, 4])
-      assert (actual) shouldBe (expected)
+      assert (actual.asString) shouldBe (expected.asString)
     }
     // This should also work...
     method testBuildTruthTableStatesWithOne {
       def a = [[true], [false]]
       def b = logic.buildTruthTableStates(1)
-      assert (b) shouldBe (a)
+      assert (b.asString) shouldBe (a.asString) // Using asString because faulty list comparison
     }
     // This should work 
     method testBuildTruthTableStatesWithTwo {
       def a = [[true, true], [true, false], [false, true], [false, false]]
       def b = logic.buildTruthTableStates(2)
-      assert (a) shouldBe (b)
+      assert (a.asString) shouldBe (b.asString)
     }
     method testCopyEquality {
         def a = logic.predicate("A")

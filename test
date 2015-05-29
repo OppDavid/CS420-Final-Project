@@ -6,4 +6,6 @@ minigrace zipTest.grace
 echo
 minigrace truthTablesTest.grace 
 echo 
-minigrace logic.grace
+minigrace logicTest.grace
+echo
+minigrace simplificationTest.grace
