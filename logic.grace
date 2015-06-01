@@ -164,6 +164,20 @@ factory method expression {
         returnExp := returnExp.conversionImpliesToOr
         returnExp
     }
+    
+    method toCNF {
+        var returnExp := self.copy
+        returnExp := returnExp.removeAllImplications
+        returnExp := returnExp.distributeOrOverAnd
+        returnExp
+    }
+    
+    method toDNF {
+        var returnExp := self.copy
+        returnExp := returnExp.removeAllImplications
+        returnExp := returnExp.distributeAndOverOr
+        returnExp
+    }
 
     // A series of methods are implemented below to allow
     // for any method traversing an expresion to determine
@@ -354,12 +368,3 @@ method buildTruthTableStates(numberOfPredicates) {
   }
   states
 }
-
-def a = predicate("A")
-def b = predicate("B")
-def c = predicate("C")
-def d = predicate("D")
-def e = (a.and(b)).or(c.and(d))
-def eDist = e.distributeOrOverAnd
-print(e)
-print(eDist)

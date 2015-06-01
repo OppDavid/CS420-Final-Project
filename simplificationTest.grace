@@ -151,6 +151,22 @@ def test = object {
             assert (e.asString) shouldBe ("((A&B)|(C&D))")
             assert (eDist.asString) shouldBe ("(((A|C)&(A|D))&((B|C)&(B|D)))")
         }
+        method testToCNF {
+            def a = logic.predicate("A")
+            def b = logic.predicate("B")
+            def e = a.iff(b)
+            def eCNF = e.toCNF
+            assert (e.asString) shouldBe ("(A<=>B)")
+            assert (eCNF.asString) shouldBe ("((~A|B)&(~B|A))")
+        }
+        method testToDNF {
+            def a = logic.predicate("A")
+            def b = logic.predicate("B")
+            def e = a.iff(b)
+            def eDNF = e.toDNF
+            assert (e.asString) shouldBe ("(A<=>B)")
+            assert (eDNF.asString) shouldBe ("(((~A&~B)|(~A&A))|((B&~B)|(B&A)))")
+        }
     }
 }
 
