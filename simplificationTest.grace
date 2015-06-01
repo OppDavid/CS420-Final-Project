@@ -95,7 +95,62 @@ def test = object {
             assert (e.asString) shouldBe ("(A<=>B)")
             assert (eConv.asString) shouldBe ("((~A|B)&(~B|A))")
         }
-        
+        method testDistributeAndOverOrOne {
+            def a = logic.predicate("A")
+            def b = logic.predicate("B")
+            def c = logic.predicate("C")
+            def e = a.and(b.or(c))
+            def eDist = e.distributeAndOverOr
+            assert (e.asString) shouldBe ("(A&(B|C))")
+            assert (eDist.asString) shouldBe ("((A&B)|(A&C))")
+        }
+        method testDistributeAndOverOrTwo {
+            def a = logic.predicate("A")
+            def b = logic.predicate("B")
+            def c = logic.predicate("C")
+            def e = (b.or(c)).and(a)
+            def eDist = e.distributeAndOverOr
+            assert (e.asString) shouldBe ("((B|C)&A)")
+            assert (eDist.asString) shouldBe ("((B&A)|(C&A))")
+        }
+        method testDistributeAndOverOrThree {
+            def a = logic.predicate("A")
+            def b = logic.predicate("B")
+            def c = logic.predicate("C")
+            def d = logic.predicate("D")
+            def e = (a.or(b)).and(c.or(d))
+            def eDist = e.distributeAndOverOr
+            assert (e.asString) shouldBe ("((A|B)&(C|D))")
+            assert (eDist.asString) shouldBe ("(((A&C)|(A&D))|((B&C)|(B&D)))")
+        }
+        method testDistributeOrOverAndOne {
+            def a = logic.predicate("A")
+            def b = logic.predicate("B")
+            def c = logic.predicate("C")
+            def e = a.or(b.and(c))
+            def eDist = e.distributeOrOverAnd
+            assert (e.asString) shouldBe ("(A|(B&C))")
+            assert (eDist.asString) shouldBe ("((A|B)&(A|C))")
+        }
+        method testDistributeOrOverAndTwo {
+            def a = logic.predicate("A")
+            def b = logic.predicate("B")
+            def c = logic.predicate("C")
+            def e = (b.and(c)).or(a)
+            def eDist = e.distributeOrOverAnd
+            assert (e.asString) shouldBe ("((B&C)|A)")
+            assert (eDist.asString) shouldBe ("((B|A)&(C|A))")
+        }
+        method testDistributeOrOverAndThree {
+            def a = logic.predicate("A")
+            def b = logic.predicate("B")
+            def c = logic.predicate("C")
+            def d = logic.predicate("D")
+            def e = (a.and(b)).or(c.and(d))
+            def eDist = e.distributeOrOverAnd
+            assert (e.asString) shouldBe ("((A&B)|(C&D))")
+            assert (eDist.asString) shouldBe ("(((A|C)&(A|D))&((B|C)&(B|D)))")
+        }
     }
 }
 

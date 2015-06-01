@@ -116,6 +116,48 @@ factory method expression {
         returnExp
     }
     
+    method distributeAndOverOr {
+        var returnExp := self.copy
+        if ( returnExp.isUnaryOperator ) then {
+            returnExp.operand := returnExp.operand.distributeAndOverOr
+        } elseif ( returnExp.isBinaryOperator ) then {
+            returnExp.operand1 := returnExp.operand1.distributeAndOverOr
+            returnExp.operand2 := returnExp.operand2.distributeAndOverOr
+            
+            if ( returnExp.isAndOperator ) then {
+                if ( returnExp.operand1.isOrOperator ) then {
+                    returnExp := (returnExp.operand1.operand1.and(returnExp.operand2)).or(returnExp.operand1.operand2.and(returnExp.operand2))
+                } elseif ( returnExp.operand2.isOrOperator ) then {
+                    returnExp := (returnExp.operand1.and(returnExp.operand2.operand1)).or(returnExp.operand1.and(returnExp.operand2.operand2))
+                }
+                returnExp.operand1 := returnExp.operand1.distributeAndOverOr
+                returnExp.operand2 := returnExp.operand2.distributeAndOverOr
+            }
+        }
+        returnExp
+    }
+    
+    method distributeOrOverAnd {
+        var returnExp := self.copy
+        if ( returnExp.isUnaryOperator ) then {
+            returnExp.operand := returnExp.operand.distributeOrOverAnd
+        } elseif ( returnExp.isBinaryOperator ) then {
+            returnExp.operand1 := returnExp.operand1.distributeOrOverAnd
+            returnExp.operand2 := returnExp.operand2.distributeOrOverAnd
+            
+            if ( returnExp.isOrOperator ) then {
+                if ( returnExp.operand1.isAndOperator ) then {
+                    returnExp := (returnExp.operand1.operand1.or(returnExp.operand2)).and(returnExp.operand1.operand2.or(returnExp.operand2))
+                } elseif ( returnExp.operand2.isAndOperator ) then {
+                    returnExp := (returnExp.operand1.or(returnExp.operand2.operand1)).and(returnExp.operand1.or(returnExp.operand2.operand2))
+                }
+                returnExp.operand1 := returnExp.operand1.distributeOrOverAnd
+                returnExp.operand2 := returnExp.operand2.distributeOrOverAnd
+            }
+        }
+        returnExp
+    }
+    
     method removeAllImplications {
         var returnExp := self.copy
         returnExp := returnExp.conversionIffToImplies
@@ -312,3 +354,12 @@ method buildTruthTableStates(numberOfPredicates) {
   }
   states
 }
+
+def a = predicate("A")
+def b = predicate("B")
+def c = predicate("C")
+def d = predicate("D")
+def e = (a.and(b)).or(c.and(d))
+def eDist = e.distributeOrOverAnd
+print(e)
+print(eDist)
