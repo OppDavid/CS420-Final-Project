@@ -228,24 +228,36 @@ factory method expression {
         }
         false
     }
+
 }
 
 factory method truthTable(exp) {
     method asString {
         var output := ""
-        print(exp.containedPredicates)
         var header := exp.containedPredicates.fold { result, it -> 
                                                  result.asString ++ it.asString ++ " | "
                                                } startingWith ""
-        header := header ++ exp.asString 
+        header := " " ++ header ++ exp.asString 
 
         output := output ++ header ++ "\n"
         
         (1..exp.states.size).do { i ->
           exp.states.at(i).do { each ->
-            output := output ++ "{each} | "
+            var S
+            if (each) then {
+                S := "T"
+            } else {
+                S := "F"
+            }
+            output := output ++ " {S} | "
           }
-          output := output ++ exp.results.at(i).asString ++ "\n"
+          var R
+          if (exp.results.at(i)) then {
+            R := "T"
+          } else {
+            R := "F"
+          }
+          output := output ++ " {R} " ++ "\n" 
         }
 
         // zip.together(states, results)
