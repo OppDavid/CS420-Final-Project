@@ -6,11 +6,13 @@
 
 # Predicates
 Predicates are atoms in a logic expression
+
     def a = logic.predicate("A")
     def b = logic.predicate("B")
 
 # Expressions
 Expressions are predicate and operator statements
+    
     def expr = a & b
 
 ## Available operators
@@ -24,24 +26,24 @@ Expressions are predicate and operator statements
 
 ## Expression evaluation
 Expressions have a set of methods that can be used to determine properties of the expressions.
-
-*Truth Tables
+* Truth
+* Truth Tables
 
     print(truthTable(expr))
 
-*isTautology
+* isTautology
 
 Returns true if the expression is a tautology
 
-*isContradiction
+* isContradiction
 
 Returns true if the expression is a contradiction
 
-*isConditional
+* isConditional
 
 Returns true if the expression is conditional
 
-*simplificationRemoveNotNot
+* simplificationRemoveNotNot
 
 Returns an expression with double nots removed
 
