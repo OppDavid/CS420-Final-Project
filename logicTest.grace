@@ -133,67 +133,67 @@ def test = object {
     }
     method testSingleNotNotSimplification {    
         def e = a.not.not
-        def eSimp = e.simplificationRemoveNotNot
+        def eSimp = e.removeNots
         assert (e.asString) shouldBe ("~~A")
         assert (eSimp.asString) shouldBe ("A")
     }
     method testNestedNotNotSimplificationOne {
         def e = (a.not.not).and(b.not.not)
-        def eSimp = e.simplificationRemoveNotNot
+        def eSimp = e.removeNots
         assert (e.asString) shouldBe ("(~~A&~~B)")
         assert (eSimp.asString) shouldBe ("(A&B)")
     }
     method testNestedNotNotSimplificationTwo {
         def e = a.not.not.not
-        def eSimp = e.simplificationRemoveNotNot
+        def eSimp = e.removeNots
         assert (e.asString) shouldBe ("~~~A")
         assert (eSimp.asString) shouldBe ("~A")
     }
     method testNestedNotNotSimplificationThree {
         def e = a.not.not.not.not
-        def eSimp = e.simplificationRemoveNotNot
+        def eSimp = e.removeNots
         assert (e.asString) shouldBe ("~~~~A")
         assert (eSimp.asString) shouldBe ("A")
     }
     method testImpliesToOr {
         def e = a.implies(b)
-        def eConv = e.conversionImpliesToOr
+        def eConv = e.removeImplies
         assert (e.asString) shouldBe ("(A=>B)")
         assert (eConv.asString) shouldBe ("(~A|B)")
     }
     method testNestedImplesToOrOne {
         def e = (a.implies(b)).and(c.implies(d))
-        def eConv = e.conversionImpliesToOr
+        def eConv = e.removeImplies
         assert (e.asString) shouldBe ("((A=>B)&(C=>D))")
         assert (eConv.asString) shouldBe ("((~A|B)&(~C|D))")
     }
     method testNestedImpliesToOrTwo {
         def e = a.implies(b.implies(c))
-        def eConv = e.conversionImpliesToOr
+        def eConv = e.removeImplies
         assert (e.asString) shouldBe ("(A=>(B=>C))")
         assert (eConv.asString) shouldBe ("(~A|(~B|C))")
     }
     method testIffToImplies {
         def e = a.iff(b)
-        def eConv = e.conversionIffToImplies
+        def eConv = e.removeIff
         assert (e.asString) shouldBe ("(A<=>B)")
         assert (eConv.asString) shouldBe ("((A=>B)&(B=>A))")
     }
     method testNestedIffToImpliesOne {
         def e = (a.iff(b)).and(c.iff(d))
-        def eConv = e.conversionIffToImplies
+        def eConv = e.removeIff
         assert (e.asString) shouldBe ("((A<=>B)&(C<=>D))")
         assert (eConv.asString) shouldBe ("(((A=>B)&(B=>A))&((C=>D)&(D=>C)))")
     }
     method testNestedIffToImpliesTwo {
         def e = a.iff(b.iff(c))
-        def eConv = e.conversionIffToImplies
+        def eConv = e.removeIff
         assert (e.asString) shouldBe ("(A<=>(B<=>C))")
         assert (eConv.asString) shouldBe ("((A=>((B=>C)&(C=>B)))&(((B=>C)&(C=>B))=>A))")
     }
-    method testRemoveAllImplications {
+    method testremoveImplications {
         def e = a.iff(b)
-        def eConv = e.removeAllImplications
+        def eConv = e.removeImplications
         assert (e.asString) shouldBe ("(A<=>B)")
         assert (eConv.asString) shouldBe ("((~A|B)&(~B|A))")
     }

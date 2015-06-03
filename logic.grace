@@ -69,10 +69,10 @@ factory method expression {
         true
     }
     
-    method simplificationRemoveNotNot {
+    method removeNots {
         var returnExp := self.copy
         if ( returnExp.isUnaryOperator ) then {
-            returnExp.operand := returnExp.operand.simplificationRemoveNotNot
+            returnExp.operand := returnExp.operand.removeNots
             // The patern to simplify is detected here
             if ( returnExp.isNotOperator ) then {
                 if ( returnExp.operand.isNotOperator ) then {
@@ -80,19 +80,19 @@ factory method expression {
                 }
             }
         } elseif ( returnExp.isBinaryOperator ) then {
-            returnExp.operand1 := returnExp.operand1.simplificationRemoveNotNot
-            returnExp.operand2 := returnExp.operand2.simplificationRemoveNotNot
+            returnExp.operand1 := returnExp.operand1.removeNots
+            returnExp.operand2 := returnExp.operand2.removeNots
         }
         returnExp
     }
     
-    method conversionImpliesToOr {
+    method removeImplies {
         var returnExp := self.copy
         if ( returnExp.isUnaryOperator ) then {
-            returnExp.operand := returnExp.operand.conversionImpliesToOr
+            returnExp.operand := returnExp.operand.removeImplies
         } elseif ( returnExp.isBinaryOperator ) then {
-            returnExp.operand1 := returnExp.operand1.conversionImpliesToOr
-            returnExp.operand2 := returnExp.operand2.conversionImpliesToOr
+            returnExp.operand1 := returnExp.operand1.removeImplies
+            returnExp.operand2 := returnExp.operand2.removeImplies
             // Patern to convert detected here
             if ( returnExp.isImpliesOperator ) then {
                 returnExp := orOperator(returnExp.operand1.not, returnExp.operand2)
@@ -101,13 +101,13 @@ factory method expression {
         returnExp
     }
     
-    method conversionIffToImplies {
+    method removeIff {
         var returnExp := self.copy
         if ( returnExp.isUnaryOperator ) then {
-            returnExp.operand := returnExp.operand.conversionIffToImplies
+            returnExp.operand := returnExp.operand.removeIff
         } elseif ( returnExp.isBinaryOperator ) then {
-            returnExp.operand1 := returnExp.operand1.conversionIffToImplies
-            returnExp.operand2 := returnExp.operand2.conversionIffToImplies
+            returnExp.operand1 := returnExp.operand1.removeIff
+            returnExp.operand2 := returnExp.operand2.removeIff
             // Patern to convert detected here
             if ( returnExp.isIffOperator ) then {
                 returnExp := andOperator(impliesOperator(returnExp.operand1.copy, returnExp.operand2.copy), impliesOperator(returnExp.operand2, returnExp.operand1))
@@ -158,23 +158,23 @@ factory method expression {
         returnExp
     }
     
-    method removeAllImplications {
+    method removeImplications {
         var returnExp := self.copy
-        returnExp := returnExp.conversionIffToImplies
-        returnExp := returnExp.conversionImpliesToOr
+        returnExp := returnExp.removeIff
+        returnExp := returnExp.removeImplies
         returnExp
     }
     
     method toCNF {
         var returnExp := self.copy
-        returnExp := returnExp.removeAllImplications
+        returnExp := returnExp.removeImplications
         returnExp := returnExp.distributeOrOverAnd
         returnExp
     }
     
     method toDNF {
         var returnExp := self.copy
-        returnExp := returnExp.removeAllImplications
+        returnExp := returnExp.removeImplications
         returnExp := returnExp.distributeAndOverOr
         returnExp
     }
@@ -232,38 +232,36 @@ factory method expression {
 }
 
 factory method truthTable(exp) {
-    method asString {
-        var output := ""
-        var header := exp.containedPredicates.fold { result, it -> 
+    var output := ""
+    var header := exp.containedPredicates.fold { result, it -> 
                                                  result.asString ++ it.asString ++ " | "
                                                } startingWith ""
-        header := " " ++ header ++ exp.asString 
+    header := " " ++ header ++ exp.asString 
 
-        output := output ++ header ++ "\n"
+    output := output ++ header ++ "\n"
         
-        (1..exp.states.size).do { i ->
-          exp.states.at(i).do { each ->
-            var S
-            if (each) then {
-                S := "T"
-            } else {
-                S := "F"
-            }
-            output := output ++ " {S} | "
-          }
-          var R
-          if (exp.results.at(i)) then {
-            R := "T"
-          } else {
-            R := "F"
-          }
-          output := output ++ " {R} " ++ "\n" 
+    (1..exp.states.size).do { i ->
+      exp.states.at(i).do { each ->
+        var S
+        if (each) then {
+            S := "T"
+        } else {
+            S := "F"
         }
+        output := output ++ " {S} | "
+      }
+      var R
+      if (exp.results.at(i)) then {
+        R := "T"
+      } else {
+        R := "F"
+      }
+      output := output ++ " {R} " ++ "\n" 
+    }
 
-        // zip.together(states, results)
+    // zip.together(states, results)
 
-        output
-   }
+    print(output)
 }
 
 method predicate(id) { predicate(id) withState (true) }
@@ -380,3 +378,8 @@ method buildTruthTableStates(numberOfPredicates) {
   }
   states
 }
+
+def a = predicate("A")
+def b = predicate("B")
+def c = predicate("C")
+print(a&b=>c)
