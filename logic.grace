@@ -411,8 +411,8 @@ def c = predicate("C")
 var expr := (a&b)|c
 
 print(expr)
-print(truthTable(expr))
+print(expr.results)
 
 var expr2 := expr.distributeOrOverAnd
 print(expr2)
-print(truthTable(expr2))
+print(expr2.results)
