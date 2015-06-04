@@ -158,6 +158,28 @@ factory method expression {
         returnExp
     }
     
+    method distributeNot {
+        var returnExp := self.copy
+        if ( returnExp.isUnaryOperator ) then {
+            if ( returnExp.isNotOperator ) then {
+                returnExp.operand := returnExp.operand.distributeNot
+                if ( returnExp.operand.isAndOperator ) then {
+                    returnExp := (returnExp.operand.operand1.not).or(returnExp.operand.operand2.not)
+                    returnExp.operand1 := returnExp.operand1.distributeNot
+                    returnExp.operand2 := returnExp.operand2.distributeNot
+                } elseif ( returnExp.operand.isOrOperator ) then {
+                    returnExp := (returnExp.operand.operand1.not).and(returnExp.operand.operand2.not)
+                    returnExp.operand1 := returnExp.operand1.distributeNot
+                    returnExp.operand2 := returnExp.operand2.distributeNot
+                }
+            }
+        } elseif ( returnExp.isBinaryOperator ) then {
+            returnExp.operand1 := returnExp.operand1.distributeNot
+            returnExp.operand2 := returnExp.operand2.distributeNot
+        }
+        returnExp
+    }
+    
     method removeImplications {
         var returnExp := self.copy
         returnExp := returnExp.removeIff
@@ -379,7 +401,18 @@ method buildTruthTableStates(numberOfPredicates) {
   states
 }
 
+// This produces a bug we need to adress
+// distribution is implimented correctly
+// The evaluation method seems to be to blame for this issue
 def a = predicate("A")
 def b = predicate("B")
 def c = predicate("C")
-print(a&b=>c)
+
+var expr := (a&b)|c
+
+print(expr)
+print(truthTable(expr))
+
+var expr2 := expr.distributeOrOverAnd
+print(expr2)
+print(truthTable(expr2))

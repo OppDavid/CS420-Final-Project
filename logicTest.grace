@@ -233,6 +233,18 @@ def test = object {
         assert (e.asString) shouldBe ("((A&B)|(C&D))")
         assert (eDist.asString) shouldBe ("(((A|C)&(A|D))&((B|C)&(B|D)))")
     }
+    method testDistributeNotOverAnd {
+        def e = (a.and(b)).not
+        def eDist = e.distributeNot
+        assert (e.asString) shouldBe ("~(A&B)")
+        assert (eDist.asString) shouldBe ("(~A|~B)")
+    }
+    method testDistributeNotOverOr {
+        def e = (a.or(b)).not
+        def eDist = e.distributeNot
+        assert (e.asString) shouldBe ("~(A|B)")
+        assert (eDist.asString) shouldBe ("(~A&~B)")
+    }
     method testToCNF {
         def e = a.iff(b)
         def eCNF = e.toCNF
