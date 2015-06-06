@@ -1,4 +1,5 @@
-import "truthTables" as truthTables 
+import "utils" as util
+import "equivalances" as equiv 
 // import "zip" as zip
 
 factory method expression {
@@ -344,59 +345,32 @@ factory method binaryOperator(operand1', operand2', symbol') {
 
 factory method notOperator(operand') {
     inherits unaryOperator(operand', "~")
-    method evaluate { truthTables.not(operand.evaluate) }
+    method evaluate { equiv.not(operand.evaluate) }
     method copy { notOperator(operand.copy) }
 }
 
 factory method andOperator(operand1', operand2') {
     inherits binaryOperator(operand1', operand2', "&")
-    method evaluate { truthTables.and(operand1.evaluate, operand2.evaluate) }
+    method evaluate { equiv.and(operand1.evaluate, operand2.evaluate) }
     method copy { andOperator(operand1.copy, operand2.copy) }
 }
 
 factory method orOperator(operand1', operand2') {
     inherits binaryOperator(operand1', operand2', "|")
-    method evaluate { truthTables.or(operand1.evaluate, operand2.evaluate) }
+    method evaluate { equiv.or(operand1.evaluate, operand2.evaluate) }
         method copy { orOperator(operand1.copy, operand2.copy) }
 }
 
 factory method impliesOperator(operand1', operand2') {
     inherits binaryOperator(operand1', operand2', "=>")
-    method evaluate { truthTables.implies(operand1.evaluate, operand2.evaluate) }
+    method evaluate { equiv.implies(operand1.evaluate, operand2.evaluate) }
     method copy { impliesOperator(operand1.copy, operand2.copy) }
 }
 
 factory method iffOperator(operand1', operand2') {
     inherits binaryOperator(operand1', operand2', "<=>")
-    method evaluate { truthTables.iff(operand1.evaluate, operand2.evaluate) }
+    method evaluate { equiv.iff(operand1.evaluate, operand2.evaluate) }
     method copy { iffOperator(operand1.copy, operand2.copy) }
-}
-
-//
-// These should be in the set
-//
-method setCrossProduct(set1, set2) {
-  // setCrossProduct([a, b], [c, d])
-  // -> [[a, c, d], [b, c, d]]
-  def newSet: Set = list.empty
-  var newElement: List
-  set1.do { eachSet1Element ->
-    set2.do { eachSet2Element ->
-      newElement := list.empty
-      try {
-        newElement.addAll(eachSet1Element)
-      } catch { exception ->
-        newElement.add(eachSet1Element)
-      }
-      try {
-        newElement.addAll(eachSet2Element)
-      } catch { exception ->
-        newElement.add(eachSet2Element)
-      }
-      newSet.add(newElement)
-    }
-  }
-  newSet
 }
 
 method buildTruthTableStates(numberOfPredicates) {
@@ -404,7 +378,7 @@ method buildTruthTableStates(numberOfPredicates) {
   // [[T, T], [T, F], [F, T], [F, F]] 
   var states := list.with(list.with(true), list.with(false))
   for (1..(numberOfPredicates-1)) do { i -> 
-    states := setCrossProduct(states, list.with(true, false))
+    states := util.setCrossProduct(states, list.with(true, false))
   }
   states
 }
