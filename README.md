@@ -17,7 +17,7 @@ Expressions are predicate and operator statements
 
 ## Available operators
 * not:  `~a`
-* and:  `a & b`
+* and:  `a & b` 
 * or:   `a | b`
 * implies:  `a => b`
 * if and only if:   `a ≡ b`
@@ -26,27 +26,21 @@ Expressions are predicate and operator statements
 
 ## Expression evaluation
 Expressions have a set of methods that can be used to determine properties of the expressions.
-* Truth
-* Truth Tables
+#### Truth Tables
+`truthTable(expr)`
 
-    print(truthTable(expr))
+#### Verifications
+* isTautology: Returns true if the expression is a tautology
+* isContradiction: Returns true if the expression is a contradiction
+* isConditional: Returns true if the expression is conditional
 
-* isTautology
-
-Returns true if the expression is a tautology
-
-* isContradiction
-
-Returns true if the expression is a contradiction
-
-* isConditional
-
-Returns true if the expression is conditional
-
-* simplificationRemoveNotNot
-
-Returns an expression with double nots removed
-
-    def expr = ~~a
-    def simplified = expr.simplificationRemoveNotNot  \\ a
-
+#### Simplifications & Transformations
+* removeNots
+* removeIff
+* removeImplies: removes a simple implies operator
+* removeImplications: removes all implies operators
+* distributeAndOverOr
+* distributeOrOverAnd
+* distributeNot
+* toCNF
+* toDNF
