@@ -258,8 +258,13 @@ factory method truthTable(exp) {
     var header := exp.containedPredicates.fold { result, it -> 
                                                  result.asString ++ it.asString ++ " | "
                                                } startingWith ""
-    header := " " ++ header ++ exp.asString 
-
+    header := " " ++ header ++ exp.asString ++ "\n" 
+    
+    (1..header.size).do { 
+      header := header ++ "-"
+    }
+    print(exp.asString.size)
+   
     output := output ++ header ++ "\n"
         
     (1..exp.states.size).do { i ->
@@ -270,7 +275,7 @@ factory method truthTable(exp) {
         } else {
             S := "F"
         }
-        output := output ++ " {S} | "
+        output := output ++ " {S} |"
       }
       var R
       if (exp.results.at(i)) then {
@@ -278,7 +283,10 @@ factory method truthTable(exp) {
       } else {
         R := "F"
       }
-      output := output ++ " {R} " ++ "\n" 
+      (1..(exp.asString.size / 2)).do {
+        output := output ++ " "
+      }
+      output := output ++ "{R} " ++ "\n" 
     }
 
     // zip.together(states, results)
