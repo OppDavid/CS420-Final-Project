@@ -287,11 +287,14 @@ method printTruthTable(exp) {
   zip.together(list.with(exp.states, exp.results)).map { each -> 
     def predicates = each.at(1)
     def conclusion = each.at(2)
-    def conclusionSymbol = if (conclusion) then { "T" } else { "F" }
+    var conclusionSymbol
+    if (conclusion) then { conclusionSymbol := "T" } else { conclusionSymbol := "F" }
     var row := predicates.map { x -> 
-      if (x) then { "T" } else { "F" } 
-    }.fold { result, it -> "{result} |" } startingWith ""
-    output := "{output}{row} {conclusionSymbol}" 
+      var symbol
+      if (x) then { symbol := "T" } else { symbol := "F" } 
+      symbol 
+    }.fold { result, it -> "{result} {it} |" } startingWith ""
+    output := "{output}{row} {conclusionSymbol}\n" 
   }
 
   print(output)
@@ -383,19 +386,3 @@ method buildTruthTableStates(numberOfPredicates) {
   }
   states
 }
-
-// This produces a bug we need to adress
-// distribution is implimented correctly
-// The evaluation method seems to be to blame for this issue
-def a = predicate("A")
-def b = predicate("B")
-def c = predicate("C")
-
-var expr := (a&b)|c
-
-print(expr)
-print(expr.results)
-
-var expr2 := expr.distributeOrOverAnd
-print(expr2)
-print(expr2.results)
