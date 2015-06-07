@@ -1,6 +1,6 @@
 import "utils" as util
 import "equivalances" as equiv 
-// import "zip" as zip
+import "zip" as zip
 
 factory method expression {
   method containedPredicates { self.predicates } 
@@ -270,44 +270,29 @@ factory method expression {
 }
 
 
-factory method truthTable(exp) {
+method printTruthTable(exp) {
   // Prints a truth table for expression
   var output := ""
   var header := exp.containedPredicates.fold { result, it -> 
-                                               result.asString ++ it.asString ++ " | "
-                                             } startingWith ""
-  header := " " ++ header ++ exp.asString ++ "\n" 
+                  "{result}{it} | "
+               } startingWith ""
+  header := " {header}{exp}\n" 
     
   (1..header.size).do { 
-    header := header ++ "-"
+    header := "{header}-"
   }
    
-  output := output ++ header ++ "\n"
-        
-  (1..exp.states.size).do { i ->
-    exp.states.at(i).do { each ->
-      var S
-      if (each) then {
-        S := "T"
-      } else {
-        S := "F"
-      }
-        output := output ++ " {S} |"
-    }
-    var R
-    if (exp.results.at(i)) then {
-      R := "T"
-    } else {
-      R := "F"
-    }
-    // Give the table some spacing
-    (1..(exp.asString.size / 2)).do {
-      output := output ++ " "
-    }
-    output := output ++ "{R} " ++ "\n" 
+  output := "{output}{header}\n"
+  
+  zip.together(list.with(exp.states, exp.results)).map { each -> 
+    def predicates = each.at(1)
+    def conclusion = each.at(2)
+    def conclusionSymbol = if (conclusion) then { "T" } else { "F" }
+    var row := predicates.map { x -> 
+      if (x) then { "T" } else { "F" } 
+    }.fold { result, it -> "{result} |" } startingWith ""
+    output := "{output}{row} {conclusionSymbol}" 
   }
-
-  // zip.together(states, results)
 
   print(output)
 }
