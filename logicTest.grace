@@ -8,6 +8,8 @@ def test = object {
     def b = logic.predicate("B")
     def c = logic.predicate("C")
     def d = logic.predicate("D")
+    def CON = logic.contradiction
+    def TAU = logic.tautology
     
     method testPredicateAsString { 
       assert (logic.predicate("A").asString) shouldBe ("A")
@@ -322,6 +324,78 @@ def test = object {
       def eSimp = e.complimentation
       assert (e.asString) shouldBe ("(~A|A)")
       assert (eSimp.asString) shouldBe ("Tau.")
+    }
+    method testIdentityAndOne {
+      def e = a.and(TAU)
+      def eSimp = e.identity
+      assert (e.asString) shouldBe ("(A&Tau.)")
+      assert (eSimp.asString) shouldBe ("A")
+    }
+    method testIdentityAndTwo {
+      def e = TAU.and(a)
+      def eSimp = e.identity
+      assert (e.asString) shouldBe ("(Tau.&A)")
+      assert (eSimp.asString) shouldBe ("A")
+    }
+    method testIdentityAndThree {
+      def e = a.and(CON)
+      def eSimp = e.identity
+      assert (e.asString) shouldBe ("(A&Con.)")
+      assert (eSimp.asString) shouldBe ("Con.")
+    }
+    method testIdentityAndFour {
+      def e = CON.and(a)
+      def eSimp = e.identity
+      assert (e.asString) shouldBe ("(Con.&A)")
+      assert (eSimp.asString) shouldBe ("Con.")
+    }
+    method testNestedIdentityAndOne {
+      def e = (a.and(TAU)).not
+      def eSimp = e.identity
+      assert (e.asString) shouldBe ("~(A&Tau.)")
+      assert (eSimp.asString) shouldBe ("~A")
+    }
+    method testNestedIdentityAndTwo {
+      def e = (a.and(CON)).not
+      def eSimp = e.identity
+      assert (e.asString) shouldBe ("~(A&Con.)")
+      assert (eSimp.asString) shouldBe ("~Con.")
+    }
+    method testIdentityOrOne {
+      def e = a.or(TAU)
+      def eSimp = e.identity
+      assert (e.asString) shouldBe ("(A|Tau.)")
+      assert (eSimp.asString) shouldBe ("Tau.")
+    }
+    method testIdentityOrTwo {
+      def e = TAU.or(a)
+      def eSimp = e.identity
+      assert (e.asString) shouldBe ("(Tau.|A)")
+      assert (eSimp.asString) shouldBe ("Tau.")
+    }
+    method testIdentityOrThree {
+      def e = a.or(CON)
+      def eSimp = e.identity
+      assert (e.asString) shouldBe ("(A|Con.)")
+      assert (eSimp.asString) shouldBe ("A")
+    }
+    method testIdentityOrFour {
+      def e = CON.or(a)
+      def eSimp = e.identity
+      assert (e.asString) shouldBe ("(Con.|A)")
+      assert (eSimp.asString) shouldBe ("A")
+    }
+    method testNestedIdentityOrOne {
+      def e = (a.or(TAU)).not
+      def eSimp = e.identity
+      assert (e.asString) shouldBe ("~(A|Tau.)")
+      assert (eSimp.asString) shouldBe ("~Tau.")
+    }
+    method testNestedIdentityOrTwo {
+      def e = (a.or(CON)).not
+      def eSimp = e.identity
+      assert (e.asString) shouldBe ("~(A|Con.)")
+      assert (eSimp.asString) shouldBe ("~A")
     }
   }
 }

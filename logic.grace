@@ -215,6 +215,40 @@ factory method expression {
     returnExp
   }
   
+  method andComplimentation {
+    // (A&~A) -> Con
+    var returnExp := self.copy
+    if ( returnExp.isAndOperator ) then {
+      if ( returnExp.operand1.isNotOperator ) then {
+        if ( (returnExp.operand1.operand) == (returnExp.operand2) ) then {
+          returnExp := contradiction
+        }
+      } elseif ( returnExp.operand2.isNotOperator ) then {
+        if ( (returnExp.operand1) == (returnExp.operand2.operand) ) then {
+          returnExp := contradiction
+        }
+      }
+    }
+    returnExp
+  }
+  
+  method orComplimentation {
+    // (A|~A) -> Tau
+    var returnExp := self.copy
+    if ( returnExp.isOrOperator ) then {
+      if ( returnExp.operand1.isNotOperator ) then {
+        if ( (returnExp.operand1.operand) == (returnExp.operand2) ) then {
+          returnExp := tautology
+        }
+      } elseif ( returnExp.operand2.isNotOperator ) then {
+        if ( (returnExp.operand1) == (returnExp.operand2.operand) ) then {
+          returnExp := tautology    
+        }
+      }
+    }
+    returnExp
+  }
+  
   method complimentation {
     // (A&~A) -> Con and (A|~A) -> Tau
     var returnExp := self.copy
@@ -223,27 +257,75 @@ factory method expression {
     } elseif ( returnExp.isBinaryOperator ) then {
       returnExp.operand1 := returnExp.operand1.complimentation
       returnExp.operand2 := returnExp.operand2.complimentation
-      if ( returnExp.isAndOperator ) then {
-        if ( returnExp.operand1.isNotOperator ) then {
-          if ( (returnExp.operand1.operand) == (returnExp.operand2) ) then {
-            returnExp := contradiction
-          }
-        } elseif ( returnExp.operand2.isNotOperator ) then {
-          if ( (returnExp.operand1) == (returnExp.operand2.operand) ) then {
-            returnExp := contradiction
-          }
-        }
-      } elseif ( returnExp.isOrOperator ) then {
-        if ( returnExp.operand1.isNotOperator ) then {
-          if ( (returnExp.operand1.operand) == (returnExp.operand2) ) then {
-            returnExp := tautology
-          }
-        } elseif ( returnExp.operand2.isNotOperator ) then {
-          if ( (returnExp.operand1) == (returnExp.operand2.operand) ) then {
-            returnExp := tautology    
-          }
-        }
+      returnExp := returnExp.andComplimentation
+      returnExp := returnExp.orComplimentation
+    }
+    returnExp
+  }
+  
+  method andTautologyIdentity {
+    // (A&Tau) -> A 
+    var returnExp := self.copy
+    if ( returnExp.isAndOperator ) then {
+      if ( returnExp.operand1.isTautology ) then {
+        returnExp := returnExp.operand2
+      } elseif ( returnExp.operand2.isTautology ) then {
+        returnExp := returnExp.operand1
       }
+    }
+    returnExp
+  }
+  
+  method andContradictionIdentity {
+    // (A&Con) -> Con
+    var returnExp := self.copy
+    if ( returnExp.isAndOperator ) then {
+      if ( returnExp.operand1.isContradiction || returnExp.operand2.isContradiction ) then {
+        returnExp := contradiction
+      }
+    }
+    returnExp
+  }
+  
+  method orTautologyIdentity {
+    // (A|Tau) -> Tau
+    var returnExp := self.copy
+    if ( returnExp.isOrOperator ) then {
+      if ( returnExp.operand1.isTautology || returnExp.operand2.isTautology ) then {
+        returnExp := tautology
+      }
+    }
+    returnExp
+  }
+  
+  method orContradictionIdentity {
+    // (A|Con) -> A
+    var returnExp := self.copy
+    if ( returnExp.isOrOperator ) then {
+      if ( returnExp.operand1.isContradiction ) then {
+        returnExp := returnExp.operand2
+      } elseif ( returnExp.operand2.isContradiction ) then {
+        returnExp := returnExp.operand1
+      }
+    }
+    returnExp
+  }
+  
+  method identity {
+    // (A&Tau) -> A
+    // (A&Con) -> Con
+    // (A|Tau) -> Tau
+    // (A|Con) -> A
+    var returnExp := self.copy
+    if ( returnExp.isUnaryOperator ) then {
+      returnExp.operand := returnExp.operand.identity
+    } elseif ( returnExp.isBinaryOperator ) then {
+      returnExp.operand1 := returnExp.operand1.identity
+      returnExp.operand2 := returnExp.operand2.identity
+      returnExp := returnExp.andTautologyIdentity
+      returnExp := returnExp.andContradictionIdentity
+      returnExp := returnExp.orTautologyIdentity
+      returnExp := returnExp.orContradictionIdentity
     }
     returnExp
   }
@@ -427,8 +509,9 @@ factory method iffOperator(operand1', operand2') {
 }
 
 factory method tautology(*operands)  {
-  // Should this inherit
+  inherits expression
   method isTautology { true } 
+  method isContradiction { false }
   method isPredicate { false }
   method isUnaryOperator { false }
   method isBinaryOperator { false }
@@ -440,7 +523,8 @@ factory method tautology(*operands)  {
 }
 
 factory method contradiction(*operands)  {
-  // Should this inherit
+  inherits expression
+  method isTautology { false }
   method isContradiction { true } 
   method isPredicate { false }
   method isUnaryOperator { false }
