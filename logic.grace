@@ -377,6 +377,26 @@ factory method iffOperator(operand1', operand2') {
   method copy { iffOperator(operand1.copy, operand2.copy) }
 }
 
+factory method tautology(*operands)  {
+  method isTautology { true } 
+  method isPredicate { false }
+  method isUnaryOperator { false }
+  method isBinaryOperator { false }
+  method copy { tautology(operands) }
+  method evaluate { true }
+  method predicates { list.empty }
+}
+
+factory method contradiction(*operands)  {
+  method isContradiction { true } 
+  method isPredicate { false }
+  method isUnaryOperator { false }
+  method isBinaryOperator { false }
+  method copy { tautology(operands) }
+  method evaluate { false }
+  method predicates { list.empty }
+}
+
 method buildTruthTableStates(numberOfPredicates) {
   // buildTruthTableStates(2) ->
   // [[T, T], [T, F], [F, T], [F, F]] 
@@ -386,3 +406,5 @@ method buildTruthTableStates(numberOfPredicates) {
   }
   states
 }
+
+
