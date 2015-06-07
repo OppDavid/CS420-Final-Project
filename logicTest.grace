@@ -50,16 +50,16 @@ def test = object {
       def e = ~a
       assert (e.asString) shouldBe ("~A")
     }
-    method testSetCrossProductOfOneElementSets {
-      def expected = [[1, 2]]
-      def actual = logic.setCrossProduct([1], [2])
-      assert (actual.asString) shouldBe (expected.asString)
-    }
-    method testSetCrossProductOfTwoElementSets {
-      def expected = [[1, 3], [1, 4], [2, 3], [2, 4]]
-      def actual = logic.setCrossProduct([1, 2], [3, 4])
-      assert (actual.asString) shouldBe (expected.asString)
-    }
+    //method testSetCrossProductOfOneElementSets {
+    //  def expected = [[1, 2]]
+    //  def actual = logic.setCrossProduct([1], [2])
+    //  assert (actual.asString) shouldBe (expected.asString)
+    //}
+    //method testSetCrossProductOfTwoElementSets {
+    //  def expected = [[1, 3], [1, 4], [2, 3], [2, 4]]
+    //  def actual = logic.setCrossProduct([1, 2], [3, 4])
+    //  assert (actual.asString) shouldBe (expected.asString)
+    //}
     // This should also work...
     method testBuildTruthTableStatesWithOne {
       def expected = [[true], [false]]
@@ -277,6 +277,51 @@ def test = object {
       assert (e.asString) shouldBe ("(A<=>B)")
       assert (eDNF.asString) shouldBe ("(((~A&~B)|(~A&A))|((B&~B)|(B&A)))")
       assert (e.results.asString) shouldBe (eDNF.results.asString)
+    }
+    method testIdempotentAnd {
+      def e = a.and(a)
+      def eSimp = e.idempotent
+      assert (e.asString) shouldBe ("(A&A)")
+      assert (eSimp.asString) shouldBe ("A")
+      assert (e.results.asString) shouldBe (eSimp.results.asString)
+    }
+    method testIdempotentOr {
+      def e = a.or(a)
+      def eSimp = e.idempotent
+      assert (e.asString) shouldBe ("(A|A)")
+      assert (eSimp.asString) shouldBe ("A")
+      assert (e.results.asString) shouldBe (eSimp.results.asString)
+    }
+    method testNestedIdempotent{
+      def e = (a.and(a)).not
+      def eSimp = e.idempotent
+      assert (e.asString) shouldBe ("~(A&A)")
+      assert (eSimp.asString) shouldBe ("~A")
+      assert (e.results.asString) shouldBe (eSimp.results.asString)
+    }
+    method testComplimentationAndOne {
+      def e = a.and(a.not)
+      def eSimp = e.complimentation
+      assert (e.asString) shouldBe ("(A&~A)")
+      assert (eSimp.asString) shouldBe ("Con.")
+    }
+    method testComplimentationAndTwo {
+      def e = (a.not).and(a)
+      def eSimp = e.complimentation
+      assert (e.asString) shouldBe ("(~A&A)")
+      assert (eSimp.asString) shouldBe ("Con.")
+    }
+    method testComplimentationOrOne {
+      def e = a.or(a.not)
+      def eSimp = e.complimentation
+      assert (e.asString) shouldBe ("(A|~A)")
+      assert (eSimp.asString) shouldBe ("Tau.")
+    }
+    method testComplimentationOrTwo {
+      def e = (a.not).or(a)
+      def eSimp = e.complimentation
+      assert (e.asString) shouldBe ("(~A|A)")
+      assert (eSimp.asString) shouldBe ("Tau.")
     }
   }
 }

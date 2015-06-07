@@ -195,7 +195,56 @@ factory method expression {
       returnExp.operand1 := returnExp.operand1.distributeNot
       returnExp.operand2 := returnExp.operand2.distributeNot
     }
-
+    returnExp
+  }
+  
+  method idempotent {
+    // (A&A) -> A and (A|A) -> A
+    var returnExp := self.copy
+    if ( returnExp.isUnaryOperator ) then {
+      returnExp.operand := returnExp.operand.idempotent
+    } elseif ( returnExp.isBinaryOperator ) then {
+      returnExp.operand1 := returnExp.operand1.idempotent
+      returnExp.operand2 := returnExp.operand2.idempotent
+      if ( returnExp.isAndOperator || returnExp.isOrOperator ) then {
+        if ( (returnExp.operand1) == (returnExp.operand2) ) then {
+          returnExp := returnExp.operand1
+        }
+      }
+    }
+    returnExp
+  }
+  
+  method complimentation {
+    // (A&~A) -> Con and (A|~A) -> Tau
+    var returnExp := self.copy
+    if ( returnExp.isUnaryOperator ) then {
+      returnExp.operand := returnExp.operand.complimentation
+    } elseif ( returnExp.isBinaryOperator ) then {
+      returnExp.operand1 := returnExp.operand1.complimentation
+      returnExp.operand2 := returnExp.operand2.complimentation
+      if ( returnExp.isAndOperator ) then {
+        if ( returnExp.operand1.isNotOperator ) then {
+          if ( (returnExp.operand1.operand) == (returnExp.operand2) ) then {
+            returnExp := contradiction
+          }
+        } elseif ( returnExp.operand2.isNotOperator ) then {
+          if ( (returnExp.operand1) == (returnExp.operand2.operand) ) then {
+            returnExp := contradiction
+          }
+        }
+      } elseif ( returnExp.isOrOperator ) then {
+        if ( returnExp.operand1.isNotOperator ) then {
+          if ( (returnExp.operand1.operand) == (returnExp.operand2) ) then {
+            returnExp := tautology
+          }
+        } elseif ( returnExp.operand2.isNotOperator ) then {
+          if ( (returnExp.operand1) == (returnExp.operand2.operand) ) then {
+            returnExp := tautology    
+          }
+        }
+      }
+    }
     returnExp
   }
     
@@ -378,6 +427,7 @@ factory method iffOperator(operand1', operand2') {
 }
 
 factory method tautology(*operands)  {
+  // Should this inherit
   method isTautology { true } 
   method isPredicate { false }
   method isUnaryOperator { false }
@@ -385,16 +435,20 @@ factory method tautology(*operands)  {
   method copy { tautology(operands) }
   method evaluate { true }
   method predicates { list.empty }
+  // This needs to be a specific symbol
+  method asString { "Tau." }
 }
 
 factory method contradiction(*operands)  {
+  // Should this inherit
   method isContradiction { true } 
   method isPredicate { false }
   method isUnaryOperator { false }
   method isBinaryOperator { false }
-  method copy { tautology(operands) }
+  method copy { contradiction(operands) }
   method evaluate { false }
   method predicates { list.empty }
+  method asString { "Con." }
 }
 
 method buildTruthTableStates(numberOfPredicates) {
