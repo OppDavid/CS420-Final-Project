@@ -216,7 +216,7 @@ factory method expression {
   }
   
   method andComplimentation {
-    // (A&~A) -> Con
+    // (A&~A) -> ℂ
     var returnExp := self.copy
     if ( returnExp.isAndOperator ) then {
       if ( returnExp.operand1.isNotOperator ) then {
@@ -233,7 +233,7 @@ factory method expression {
   }
   
   method orComplimentation {
-    // (A|~A) -> Tau
+    // (A|~A) -> 𝕋
     var returnExp := self.copy
     if ( returnExp.isOrOperator ) then {
       if ( returnExp.operand1.isNotOperator ) then {
@@ -250,7 +250,7 @@ factory method expression {
   }
   
   method complimentation {
-    // (A&~A) -> Con and (A|~A) -> Tau
+    // (A&~A) -> ℂ and (A|~A) -> 𝕋
     var returnExp := self.copy
     if ( returnExp.isUnaryOperator ) then {
       returnExp.operand := returnExp.operand.complimentation
@@ -264,7 +264,7 @@ factory method expression {
   }
   
   method andTautologyIdentity {
-    // (A&Tau) -> A 
+    // (A&𝕋) -> A 
     var returnExp := self.copy
     if ( returnExp.isAndOperator ) then {
       if ( returnExp.operand1.isTautology ) then {
@@ -277,7 +277,7 @@ factory method expression {
   }
   
   method andContradictionIdentity {
-    // (A&Con) -> Con
+    // (A&ℂ) -> ℂ
     var returnExp := self.copy
     if ( returnExp.isAndOperator ) then {
       if ( returnExp.operand1.isContradiction || returnExp.operand2.isContradiction ) then {
@@ -288,7 +288,7 @@ factory method expression {
   }
   
   method orTautologyIdentity {
-    // (A|Tau) -> Tau
+    // (A|𝕋) -> 𝕋
     var returnExp := self.copy
     if ( returnExp.isOrOperator ) then {
       if ( returnExp.operand1.isTautology || returnExp.operand2.isTautology ) then {
@@ -299,7 +299,7 @@ factory method expression {
   }
   
   method orContradictionIdentity {
-    // (A|Con) -> A
+    // (A|ℂ) -> A
     var returnExp := self.copy
     if ( returnExp.isOrOperator ) then {
       if ( returnExp.operand1.isContradiction ) then {
@@ -312,10 +312,10 @@ factory method expression {
   }
   
   method identity {
-    // (A&Tau) -> A
-    // (A&Con) -> Con
-    // (A|Tau) -> Tau
-    // (A|Con) -> A
+    // (A&𝕋) -> A
+    // (A&ℂ) -> ℂ
+    // (A|𝕋) -> 𝕋
+    // (A|ℂ) -> A
     var returnExp := self.copy
     if ( returnExp.isUnaryOperator ) then {
       returnExp.operand := returnExp.operand.identity
@@ -518,8 +518,7 @@ factory method tautology(*operands)  {
   method copy { tautology(operands) }
   method evaluate { true }
   method predicates { list.empty }
-  // This needs to be a specific symbol
-  method asString { "Tau." }
+  method asString { "𝕋" }
 }
 
 factory method contradiction(*operands)  {
@@ -532,7 +531,7 @@ factory method contradiction(*operands)  {
   method copy { contradiction(operands) }
   method evaluate { false }
   method predicates { list.empty }
-  method asString { "Con." }
+  method asString { "ℂ" }
 }
 
 method buildTruthTableStates(numberOfPredicates) {
