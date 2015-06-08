@@ -61,11 +61,11 @@ factory method expression {
   }
     
   method isTautology {
-    truthValues.filter(utils.identity).size == truthValues.size
+    truthValues.filter(util.identity).size == truthValues.size
   }
     
   method isContradiction {
-    truthValues.filter(utils.identity).isEmpty
+    truthValues.filter(util.identity).isEmpty
   }
     
   method isConditional {
