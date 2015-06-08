@@ -476,7 +476,15 @@ factory method binaryOperator(operand1', operand2', symbol') {
         newList.add(each)
       }
     }
-    newList
+    newList.sortBy{ left, right ->
+      if ("{left}" < "{right}") then {
+        -1
+      } elseif ("{left}" > "{right}") then {
+        1
+      } else {
+        0
+      }
+    }
   }
   method asString { "({operand1}{symbol}{operand2})" }
 }
