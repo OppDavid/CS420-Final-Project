@@ -123,7 +123,7 @@ factory method expression {
       returnExp.operand2 := returnExp.operand2.removeIff
       // Simplify pattern detected
       if (returnExp.isIffOperator) then {
-        returnExp := andOperator(impliesOperator(returnExp.operand1.copy, returnExp.operand2.copy),
+        returnExp := andOperator(impliesOperator(returnExp.operand1, returnExp.operand2),
                                  impliesOperator(returnExp.operand2, returnExp.operand1))
       }
     }
