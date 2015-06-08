@@ -27,3 +27,5 @@ method setCrossProduct(set1, set2) {
   }
   newSet
 }
+
+def identity = { x -> x }

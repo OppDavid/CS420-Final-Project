@@ -61,21 +61,11 @@ factory method expression {
   }
     
   method isTautology {
-    truthValues.do { each ->
-      if (!each) then {
-        return false
-      }
-    }
-    true
+    truthValues.filter(utils.identity).size == truthValues.size
   }
     
   method isContradiction {
-    truthValues.do { each ->
-      if (each) then {
-        return false
-      }
-    }
-    true
+    truthValues.filter(utils.identity).isEmpty
   }
     
   method isConditional {
