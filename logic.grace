@@ -4,10 +4,23 @@ import "zip" as zip
 
 factory method expression {
   method containedPredicates { self.predicates } 
-  // All (true/false) states possible with predicates list
-  method states { buildTruthTableStates(self.predicates.size) } 
-  // A list of all truth values for each predicate state
-  method results { 
+  method states { 
+    // All (true/false) states possible with predicates list
+    // Example:
+    // > def e = predicate('a') & predicate('b')
+    // > e.states
+    // [[true, true],[true, false], [false, true], [false, false]]
+
+    buildTruthTableStates(self.predicates.size) 
+  } 
+  method truthValues { 
+    // A list of all truth values for each predicate state
+    // Example:
+    // > (predicate('a') & predicate('b')).truthValues
+    // [true, false, false, false]
+    // > (predicate('a') | predicate('b')).truthValues
+    // [true, true, true, false]
+
     var returnResults := list.empty() 
     states.do { state ->
       (1..(state.size)).do { i ->
@@ -48,7 +61,7 @@ factory method expression {
   }
     
   method isTautology {
-    results.do { each ->
+    truthValues.do { each ->
       if (!each) then {
         return false
       }
@@ -57,7 +70,7 @@ factory method expression {
   }
     
   method isContradiction {
-    results.do { each ->
+    truthValues.do { each ->
       if (each) then {
         return false
       }
@@ -415,7 +428,7 @@ method printTruthTable(exp) {
    
   output := "{output}{header}\n"
   
-  zip.together(list.with(exp.states, exp.results)).map { each -> 
+  zip.together(list.with(exp.states, exp.truthValues)).map { each -> 
     def predicates = each.at(1)
     def conclusion = each.at(2)
     var conclusionSymbol

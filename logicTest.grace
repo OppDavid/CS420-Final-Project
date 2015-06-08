@@ -138,168 +138,168 @@ def test = object {
       def eSimp = e.removeNots
       assert (e.asString) shouldBe ("~~A")
       assert (eSimp.asString) shouldBe ("A")
-      assert (e.results.asString) shouldBe (eSimp.results.asString)
+      assert (e.truthValues.asString) shouldBe (eSimp.truthValues.asString)
     }
     method testNestedNotNotSimplificationOne {
       def e = (a.not.not).and(b.not.not)
       def eSimp = e.removeNots
       assert (e.asString) shouldBe ("(~~A&~~B)")
       assert (eSimp.asString) shouldBe ("(A&B)")
-      assert (e.results.asString) shouldBe (eSimp.results.asString)
+      assert (e.truthValues.asString) shouldBe (eSimp.truthValues.asString)
     }
     method testNestedNotNotSimplificationTwo {
       def e = a.not.not.not
       def eSimp = e.removeNots
       assert (e.asString) shouldBe ("~~~A")
       assert (eSimp.asString) shouldBe ("~A")
-      assert (e.results.asString) shouldBe (eSimp.results.asString)
+      assert (e.truthValues.asString) shouldBe (eSimp.truthValues.asString)
     }
     method testNestedNotNotSimplificationThree {
       def e = a.not.not.not.not
       def eSimp = e.removeNots
       assert (e.asString) shouldBe ("~~~~A")
       assert (eSimp.asString) shouldBe ("A")
-      assert (e.results.asString) shouldBe (eSimp.results.asString)
+      assert (e.truthValues.asString) shouldBe (eSimp.truthValues.asString)
     }
     method testImpliesToOr {
       def e = a.implies(b)
       def eConv = e.removeImplies
       assert (e.asString) shouldBe ("(A=>B)")
       assert (eConv.asString) shouldBe ("(~A|B)")
-      assert (e.results.asString) shouldBe (eConv.results.asString)
+      assert (e.truthValues.asString) shouldBe (eConv.truthValues.asString)
     }
     method testNestedImplesToOrOne {
       def e = (a.implies(b)).and(c.implies(d))
       def eConv = e.removeImplies
       assert (e.asString) shouldBe ("((A=>B)&(C=>D))")
       assert (eConv.asString) shouldBe ("((~A|B)&(~C|D))")
-      assert (e.results.asString) shouldBe (eConv.results.asString)
+      assert (e.truthValues.asString) shouldBe (eConv.truthValues.asString)
     }
     method testNestedImpliesToOrTwo {
       def e = a.implies(b.implies(c))
       def eConv = e.removeImplies
       assert (e.asString) shouldBe ("(A=>(B=>C))")
       assert (eConv.asString) shouldBe ("(~A|(~B|C))")
-      assert (e.results.asString) shouldBe (eConv.results.asString)
+      assert (e.truthValues.asString) shouldBe (eConv.truthValues.asString)
     }
     method testIffToImplies {
       def e = a.iff(b)
       def eConv = e.removeIff
       assert (e.asString) shouldBe ("(A<=>B)")
       assert (eConv.asString) shouldBe ("((A=>B)&(B=>A))")
-      assert (e.results.asString) shouldBe (eConv.results.asString)
+      assert (e.truthValues.asString) shouldBe (eConv.truthValues.asString)
     }
     method testNestedIffToImpliesOne {
       def e = (a.iff(b)).and(c.iff(d))
       def eConv = e.removeIff
       assert (e.asString) shouldBe ("((A<=>B)&(C<=>D))")
       assert (eConv.asString) shouldBe ("(((A=>B)&(B=>A))&((C=>D)&(D=>C)))")
-      assert (e.results.asString) shouldBe (eConv.results.asString)
+      assert (e.truthValues.asString) shouldBe (eConv.truthValues.asString)
     }
     method testNestedIffToImpliesTwo {
       def e = a.iff(b.iff(c))
       def eConv = e.removeIff
       assert (e.asString) shouldBe ("(A<=>(B<=>C))")
       assert (eConv.asString) shouldBe ("((A=>((B=>C)&(C=>B)))&(((B=>C)&(C=>B))=>A))")
-      assert (e.results.asString) shouldBe (eConv.results.asString)
+      assert (e.truthValues.asString) shouldBe (eConv.truthValues.asString)
     }
     method testremoveImplications {
       def e = a.iff(b)
       def eConv = e.removeImplications
       assert (e.asString) shouldBe ("(A<=>B)")
       assert (eConv.asString) shouldBe ("((~A|B)&(~B|A))")
-      assert (e.results.asString) shouldBe (eConv.results.asString)
+      assert (e.truthValues.asString) shouldBe (eConv.truthValues.asString)
     }
     method testDistributeAndOverOrOne {
       def e = a.and(b.or(c))
       def eDist = e.distributeAndOverOr
       assert (e.asString) shouldBe ("(A&(B|C))")
       assert (eDist.asString) shouldBe ("((A&B)|(A&C))")
-      assert (e.results.asString) shouldBe (eDist.results.asString)
+      assert (e.truthValues.asString) shouldBe (eDist.truthValues.asString)
     }
     method testDistributeAndOverOrTwo {
       def e = (b.or(c)).and(a)
       def eDist = e.distributeAndOverOr
       assert (e.asString) shouldBe ("((B|C)&A)")
       assert (eDist.asString) shouldBe ("((B&A)|(C&A))")
-      assert (e.results.asString) shouldBe (eDist.results.asString)
+      assert (e.truthValues.asString) shouldBe (eDist.truthValues.asString)
     }
     method testDistributeAndOverOrThree {
       def e = (a.or(b)).and(c.or(d))
       def eDist = e.distributeAndOverOr
       assert (e.asString) shouldBe ("((A|B)&(C|D))")
       assert (eDist.asString) shouldBe ("(((A&C)|(A&D))|((B&C)|(B&D)))")
-      assert (e.results.asString) shouldBe (eDist.results.asString)
+      assert (e.truthValues.asString) shouldBe (eDist.truthValues.asString)
     }
     method testDistributeOrOverAndOne {
       def e = a.or(b.and(c))
       def eDist = e.distributeOrOverAnd
       assert (e.asString) shouldBe ("(A|(B&C))")
       assert (eDist.asString) shouldBe ("((A|B)&(A|C))")
-      assert (e.results.asString) shouldBe (eDist.results.asString)
+      assert (e.truthValues.asString) shouldBe (eDist.truthValues.asString)
     }
     method testDistributeOrOverAndTwo {
       def e = (b.and(c)).or(a)
       def eDist = e.distributeOrOverAnd
       assert (e.asString) shouldBe ("((B&C)|A)")
       assert (eDist.asString) shouldBe ("((B|A)&(C|A))")
-      assert (e.results.asString) shouldBe (eDist.results.asString)
+      assert (e.truthValues.asString) shouldBe (eDist.truthValues.asString)
     }
     method testDistributeOrOverAndThree {
       def e = (a.and(b)).or(c.and(d))
       def eDist = e.distributeOrOverAnd
       assert (e.asString) shouldBe ("((A&B)|(C&D))")
       assert (eDist.asString) shouldBe ("(((A|C)&(A|D))&((B|C)&(B|D)))")
-      assert (e.results.asString) shouldBe (eDist.results.asString)
+      assert (e.truthValues.asString) shouldBe (eDist.truthValues.asString)
     }
     method testDistributeNotOverAnd {
       def e = (a.and(b)).not
       def eDist = e.distributeNot
       assert (e.asString) shouldBe ("~(A&B)")
       assert (eDist.asString) shouldBe ("(~A|~B)")
-      assert (e.results.asString) shouldBe (eDist.results.asString)
+      assert (e.truthValues.asString) shouldBe (eDist.truthValues.asString)
     }
     method testDistributeNotOverOr {
       def e = (a.or(b)).not
       def eDist = e.distributeNot
       assert (e.asString) shouldBe ("~(A|B)")
       assert (eDist.asString) shouldBe ("(~A&~B)")
-      assert (e.results.asString) shouldBe (eDist.results.asString)
+      assert (e.truthValues.asString) shouldBe (eDist.truthValues.asString)
     }
     method testToCNF {
       def e = a.iff(b)
       def eCNF = e.toCNF
       assert (e.asString) shouldBe ("(A<=>B)")
       assert (eCNF.asString) shouldBe ("((~A|B)&(~B|A))")
-      assert (e.results.asString) shouldBe (eCNF.results.asString)
+      assert (e.truthValues.asString) shouldBe (eCNF.truthValues.asString)
     }
     method testToDNF {
       def e = a.iff(b)
       def eDNF = e.toDNF
       assert (e.asString) shouldBe ("(A<=>B)")
       assert (eDNF.asString) shouldBe ("(((~A&~B)|(~A&A))|((B&~B)|(B&A)))")
-      assert (e.results.asString) shouldBe (eDNF.results.asString)
+      assert (e.truthValues.asString) shouldBe (eDNF.truthValues.asString)
     }
     method testIdempotentAnd {
       def e = a.and(a)
       def eSimp = e.idempotent
       assert (e.asString) shouldBe ("(A&A)")
       assert (eSimp.asString) shouldBe ("A")
-      assert (e.results.asString) shouldBe (eSimp.results.asString)
+      assert (e.truthValues.asString) shouldBe (eSimp.truthValues.asString)
     }
     method testIdempotentOr {
       def e = a.or(a)
       def eSimp = e.idempotent
       assert (e.asString) shouldBe ("(A|A)")
       assert (eSimp.asString) shouldBe ("A")
-      assert (e.results.asString) shouldBe (eSimp.results.asString)
+      assert (e.truthValues.asString) shouldBe (eSimp.truthValues.asString)
     }
     method testNestedIdempotent{
       def e = (a.and(a)).not
       def eSimp = e.idempotent
       assert (e.asString) shouldBe ("~(A&A)")
       assert (eSimp.asString) shouldBe ("~A")
-      assert (e.results.asString) shouldBe (eSimp.results.asString)
+      assert (e.truthValues.asString) shouldBe (eSimp.truthValues.asString)
     }
     method testComplimentationAndOne {
       def e = a.and(a.not)

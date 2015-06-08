@@ -1,10 +1,10 @@
 method min(x, y) { if (x <= y) then { x } else { y } }
 method max(x, y) { if (x >= y) then { x } else { y } }
 
-//
-// These should be in the set
-//
 method setCrossProduct(set1, set2) {
+  //
+  // NOTE: This should be a method of the set objects
+  //
   // setCrossProduct([a, b], [c, d])
   // -> [[a, c, d], [b, c, d]]
   def newSet: Set = list.empty
