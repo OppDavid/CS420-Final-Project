@@ -1,12 +1,14 @@
+#pragma DefaultVisibility=public
+
 import "utils" as util
 import "equivalances" as equiv 
 import "zip" as zip
 
 factory method expression {
-  method containedPredicates { 
+  method containedPredicates is confidential { 
     util.group (predicates) by { each -> "{each}" }
   }
-  method states { 
+  method states is confidential { 
     // All (true/false) states possible with predicates list
     // Example:
     // > def e = predicate('a') & predicate('b')
@@ -14,7 +16,7 @@ factory method expression {
     // [[true, true],[true, false], [false, true], [false, false]]
     buildTruthTableStates(self.containedPredicates.keys.size) 
   } 
-  method truthValues { 
+  method truthValues is confidential { 
     // A list of all truth values for each predicate state
     // Example:
     // > (predicate('a') & predicate('b')).truthValues
@@ -34,14 +36,14 @@ factory method expression {
     returnResults
   }
   // These "is" functions substitute for type checking
-  method isPredicate { abstract }
-  method isUnaryOperator { abstract }
-  method isBinaryOperator { abstract }
+  method isPredicate is confidential { abstract }
+  method isUnaryOperator is confidential { abstract }
+  method isBinaryOperator is confidential { abstract }
 
   method copy { abstract }
 
-  method evaluate { abstract }
-  method predicates { abstract }
+  method evaluate is confidential { abstract }
+  method predicates is confidential { abstract }
   method not { notOperator(self) }  
   method and (other) { andOperator(self, other) }  
   method or (other) { orOperator(self, other) }  
@@ -175,7 +177,6 @@ factory method expression {
         returnExp.operand2 := returnExp.operand2.distributeOrOverAnd
       }
     }
-
     returnExp
   }
     
@@ -220,7 +221,7 @@ factory method expression {
     returnExp
   }
   
-  method andComplimentation {
+  method andComplimentation is confidential {
     // (A&~A) -> ℂ
     var returnExp := self.copy
     if ( returnExp.isAndOperator ) then {
@@ -237,7 +238,7 @@ factory method expression {
     returnExp
   }
   
-  method orComplimentation {
+  method orComplimentation is confidential {
     // (A|~A) -> 𝕋
     var returnExp := self.copy
     if ( returnExp.isOrOperator ) then {
@@ -268,7 +269,7 @@ factory method expression {
     returnExp
   }
   
-  method andTautologyIdentity {
+  method andTautologyIdentity is confidential {
     // (A&𝕋) -> A 
     var returnExp := self.copy
     if ( returnExp.isAndOperator ) then {
@@ -281,7 +282,7 @@ factory method expression {
     returnExp
   }
   
-  method andContradictionIdentity {
+  method andContradictionIdentity is confidential {
     // (A&ℂ) -> ℂ
     var returnExp := self.copy
     if ( returnExp.isAndOperator ) then {
@@ -292,7 +293,7 @@ factory method expression {
     returnExp
   }
   
-  method orTautologyIdentity {
+  method orTautologyIdentity is confidential {
     // (A|𝕋) -> 𝕋
     var returnExp := self.copy
     if ( returnExp.isOrOperator ) then {
@@ -303,7 +304,7 @@ factory method expression {
     returnExp
   }
   
-  method orContradictionIdentity {
+  method orContradictionIdentity is confidential {
     // (A|ℂ) -> A
     var returnExp := self.copy
     if ( returnExp.isOrOperator ) then {
@@ -335,7 +336,7 @@ factory method expression {
     returnExp
   }
     
-  method removeImplications {
+  method removeImplications is confidential {
     // Removes all implications from expression
     var returnExp := self.copy
     returnExp := returnExp.removeIff
@@ -343,14 +344,14 @@ factory method expression {
     returnExp
   }
     
-  method toCNF {
+  method toCNF is confidential {
     var returnExp := self.copy
     returnExp := returnExp.removeImplications
     returnExp := returnExp.distributeOrOverAnd
     returnExp
   }
     
-  method toDNF {
+  method toDNF is confidential {
     var returnExp := self.copy
     returnExp := returnExp.removeImplications
     returnExp := returnExp.distributeAndOverOr
@@ -408,6 +409,8 @@ factory method expression {
 
 method printTruthTable(exp) {
   // Prints a truth table for expression
+  // This was intended to be an expression method
+  // It was moved due to inheritance bug associated with abrstract keyword
   var output := ""
   var header := list.withAll(exp.containedPredicates.keys).fold { result, it -> 
                   "{result}{it} | "
@@ -456,7 +459,7 @@ factory method operator(symbol') {
   method isPredicate { false }
 }
 
-factory method unaryOperator(operand', symbol') {
+factory method unaryOperator(operand', symbol') is confidential {
   inherits operator(symbol')
   var operand is public := operand'
   method isUnaryOperator { true }
@@ -465,7 +468,7 @@ factory method unaryOperator(operand', symbol') {
   method asString { "{symbol}{operand}" }
 }
 
-factory method binaryOperator(operand1', operand2', symbol') {
+factory method binaryOperator(operand1', operand2', symbol') is confidential {
   inherits operator(symbol')
   var operand1 is public := operand1'
   var operand2 is public := operand2'
@@ -487,37 +490,37 @@ factory method binaryOperator(operand1', operand2', symbol') {
   method asString { "({operand1}{symbol}{operand2})" }
 }
 
-factory method notOperator(operand') {
+factory method notOperator(operand') is confidential {
   inherits unaryOperator(operand', "~")
   method evaluate { equiv.not(operand.evaluate) }
   method copy { notOperator(operand.copy) }
 }
 
-factory method andOperator(operand1', operand2') {
+factory method andOperator(operand1', operand2') is confidential {
   inherits binaryOperator(operand1', operand2', "&")
   method evaluate { equiv.and(operand1.evaluate, operand2.evaluate) }
   method copy { andOperator(operand1.copy, operand2.copy) }
 }
 
-factory method orOperator(operand1', operand2') {
+factory method orOperator(operand1', operand2') is confidential {
   inherits binaryOperator(operand1', operand2', "|")
   method evaluate { equiv.or(operand1.evaluate, operand2.evaluate) }
   method copy { orOperator(operand1.copy, operand2.copy) }
 }
 
-factory method impliesOperator(operand1', operand2') {
+factory method impliesOperator(operand1', operand2') is confidential {
   inherits binaryOperator(operand1', operand2', "=>")
   method evaluate { equiv.implies(operand1.evaluate, operand2.evaluate) }
   method copy { impliesOperator(operand1.copy, operand2.copy) }
 }
 
-factory method iffOperator(operand1', operand2') {
+factory method iffOperator(operand1', operand2') is confidential {
   inherits binaryOperator(operand1', operand2', "<=>")
   method evaluate { equiv.iff(operand1.evaluate, operand2.evaluate) }
   method copy { iffOperator(operand1.copy, operand2.copy) }
 }
 
-factory method tautology(*operands)  {
+factory method tautology(*operands) {
   inherits expression
   method isTautology { true } 
   method isContradiction { false }
