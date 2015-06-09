@@ -29,3 +29,31 @@ method setCrossProduct(set1, set2) {
 }
 
 def identity = { x -> x }
+
+method count(xs) by(block1) {
+  def counts = dictionary.empty
+  xs.do { each -> 
+    def id = block1.apply(each)
+    def oldCount = counts.at(id)
+    if (counts.containsKey(id)) then {
+      counts.at(id)put(oldCount+1)
+    } else {
+      counts.at(id)put(1)
+    }
+  }
+  counts
+}
+
+method group(xs) by(block1) {
+  def groups = dictionary.empty
+  xs.do { each -> 
+    def id = block1.apply(each)
+    if (groups.containsKey(id)) then {
+      def oldValue = groups.at(id)
+      oldValue.addLast(each)
+    } else {
+      groups.at(id)put(list.with(each))
+    }
+  }
+  groups
+}

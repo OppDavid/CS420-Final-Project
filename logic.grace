@@ -3,15 +3,16 @@ import "equivalances" as equiv
 import "zip" as zip
 
 factory method expression {
-  method containedPredicates { self.predicates } 
+  method containedPredicates { 
+    util.group (predicates) by { each -> "{each}" }
+  }
   method states { 
     // All (true/false) states possible with predicates list
     // Example:
     // > def e = predicate('a') & predicate('b')
     // > e.states
     // [[true, true],[true, false], [false, true], [false, false]]
-
-    buildTruthTableStates(self.predicates.size) 
+    buildTruthTableStates(self.containedPredicates.keys.size) 
   } 
   method truthValues { 
     // A list of all truth values for each predicate state
@@ -22,15 +23,16 @@ factory method expression {
     // [true, true, true, false]
 
     var returnResults := list.empty() 
+    def containedPredicatesIds = list.withAll(containedPredicates.keys)
     states.do { state ->
       (1..(state.size)).do { i ->
-        containedPredicates.at(i).state := state.at(i)
+        def id = containedPredicatesIds.at(i)
+        containedPredicates.at(id).do { each -> each.state := state.at(i) }
       }
       returnResults.addLast(self.evaluate)
     }
     returnResults
   }
-
   // These "is" functions substitute for type checking
   method isPredicate { abstract }
   method isUnaryOperator { abstract }
@@ -407,7 +409,7 @@ factory method expression {
 method printTruthTable(exp) {
   // Prints a truth table for expression
   var output := ""
-  var header := exp.containedPredicates.fold { result, it -> 
+  var header := list.withAll(exp.containedPredicates.keys).fold { result, it -> 
                   "{result}{it} | "
                } startingWith ""
   header := " {header}{exp}\n" 
@@ -471,11 +473,7 @@ factory method binaryOperator(operand1', operand2', symbol') {
   method isBinaryOperator { true }
   method predicates { 
     def newList = operand1.predicates.copy
-    operand2.predicates.do { each ->
-      if (!newList.contains(each)) then { 
-        newList.add(each)
-      }
-    }
+    newList.addAll(operand2.predicates)
     newList.sortBy{ left, right ->
       if ("{left}" < "{right}") then {
         -1
